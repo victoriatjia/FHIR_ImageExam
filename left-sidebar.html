@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<!--
+	Ex Machina by TEMPLATED
+    templated.co @templatedco
+    Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+
+<head>
+	<title>DICOM VIEWER</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:700italic,400,300,700' rel='stylesheet'
+		type='text/css'>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="js/skel.min.js"></script>
+	<script src="js/skel-panels.min.js"></script>
+	<script src="js/init.js"></script>
+	<script src="js/functions.js"></script>
+	<noscript>
+		<link rel="stylesheet" href="css/skel-noscript.css" />
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/style-desktop.css" />
+		<link rel="stylesheet" href="css/style2.css" />
+	</noscript>
+</head>
+
+<body class="homepage">
+
+	<!-- Header -->
+	<div id="header">
+		<div class="container">
+
+			<!-- Logo -->
+			<div id="logo">
+				<h1><a href="#">DICOM viewer</a></h1>
+			</div>
+
+			<!-- Nav -->
+			<nav id="nav">
+				<ul>
+					<li><a href="index.html">HOMEPAGE</a></li>
+					<li class="active"><a href="left-sidebar.html">Picture</a></li>
+					<li><a href="DRSystem.html">Diagnostic Report System</a></li>
+				</ul>
+			</nav>
+
+		</div>
+	</div>
+	<!-- Header -->
+
+	<!-- Main -->
+	<div id="main" class="container">
+		<div class="row">
+			<div class="3u">
+				<section class="sidebar">
+					<header>
+						<h2 align="center" style="color:white">Patient List:</h2>
+					</header>
+					<ul class="style1">
+						<a onclick='setSession("index", 0)' class="image left"><img
+								src="https://victoriatjia.github.io/Guideline/medicalImaging/IMGfiles/MR2S1IM9.jpg"></a>
+						<a onclick='setSession("index", 1)' class="image left"><img
+								src="https://victoriatjia.github.io/Guideline/medicalImaging/IMGfiles/mammo1.jpg"></a>
+						<a onclick='setSession("index", 2)' class="image left"><img
+								src="https://victoriatjia.github.io/Guideline/medicalImaging/IMGfiles/CT_A.PNG"></a>
+						<a onclick='setSession("index", 3)' class="image left"><img
+								src="https://victoriatjia.github.io/Guideline/medicalImaging/IMGfiles/chest01.jpg"></a>
+						<!-- <a href="05.html" class="image left"><img src="images/dic5.jpg"></a> -->
+					</ul>
+				</section>
+			</div>
+
+			<div class="9u skel-cell-important">
+				<section>
+					<header>
+						<h2 style="color:white">DICOM Introduction</h2>
+					</header>
+					<p style="color:white">Digital Imaging and Communications in Medicine (DICOM) is a standard for
+						storing and transmitting medical images enabling the integration of medical imaging devices such
+						as scanners, servers, workstations, printers, network hardware, and picture archiving and
+						communication systems (PACS) from multiple manufacturers. It has been widely adopted by
+						hospitals, and is making inroads into smaller applications like dentists' and doctors' offices.
+					</p>
+					<h1 style="color:white; font-size:25px;">Please choose a patient from the list on the left side.
+					</h1>
+				</section>
+			</div>
+
+		</div>
+	</div>
+	<!-- Main -->
+
+	<!-- Copyright -->
+	<div id="copyright" class="container">
+		Design by: Jeshika, Thalia, Victoria
+	</div>
+	<script>
+		function setSession(sname, svalue) {
+			sessionStorage.setItem(sname, svalue);
+			window.open("systemA.html", "_blank");
+		}
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,199 @@
+<html>
+
+<head>
+	<style>
+		table,
+		tr,
+		td {
+			border: 2px solid black;
+			border-collapse: collapse;
+		}
+
+		.tab {
+			overflow: hidden;
+			background-color: #f1f1f1;
+		}
+
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+		.w3-red,
+		.w3-hover-red:hover {
+			background-color: white !important
+		}
+
+		.tabcontent {
+			padding: 6px 12px;
+			border: 1px solid #ccc;
+			border-top: none;
+		}
+	</style>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<script language="JavaScript" type="text/javascript" src="..\js\xmlOutput.js"></script>
+	<script language="JavaScript" type="text/javascript" src="..\js\jsonObservation.js"></script>
+</head>
+
+<body>
+	<table align="center">
+		<tr bgcolor="yellow">
+			<td align="center">
+				Mass
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<div id="Mass" class="tabcontent">
+					<form id="mass" name="mass" style="text-align: center">
+						<table align="center">
+							<tr>
+								<td colspan="3">
+									<input id="RT" type="radio" name="main" value="Right_side" />Rt.&nbsp;
+									<input id="LT" type="radio" name="main" value="Left_side" />Lt.&nbsp;
+									<input id="MU" type="radio" name="main" value="Unilateral" />Multiple,
+									Unilateral&nbsp;
+									<input id="MB" type="radio" name="main" value="Bilateral" />Multiple,
+									Bilateral<br />
+								</td>
+							</tr>
+							<tr>
+								<td rowspan="2" align="center">Location</td>
+								<td colspan="2">
+									<input type="radio" name="LocationCS" id="breast.left.nipple"
+										value="breast.left.nipple" />breast.left.nipple&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.nipple"
+										value="breast.right.nipple" />breast.right.nipple&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.centralportion"
+										value="breast.left.centralportion" />breast.left.centralportion&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.centralportion"
+										value="breast.right.centralportion" />breast.right.centralportion&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.uiq"
+										value="breast.left.uiq" />breast.left.uiq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.uiq"
+										value="breast.right.uiq" />breast.right.uiq&nbsp;<br>
+									<input type="radio" name="LocationCS" id="breast.left.liq"
+										value="breast.left.liq" />breast.left.liq
+									<input type="radio" name="LocationCS" id="breast.right.liq"
+										value="breast.right.liq" />breast.right.liq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.uoq"
+										value="breast.left.uoq" />breast.left.uoq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.uoq"
+										value="breast.right.uoq" />breast.right.uoq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.loq"
+										value="breast.left.loq" />breast.left.loq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.loq"
+										value="breast.right.loq" />breast.right.loq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.axieltail"
+										value="breast.left.axieltail" />breast.left.axieltail&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.axieltail"
+										value="breast.right.axieltail" />breast.right.axieltail&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.overlapp"
+										value="breast.left.overlapp" />breast.left.overlapp&nbsp;<br>
+									<input type="radio" name="LocationCS" id="breast.right.overlapp"
+										value="breast.right.overlapp" />breast.right.overlapp&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.nos"
+										value="breast.left.nos" />breast.left.nos&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.nos"
+										value="breast.right.nos" />breast.right.nos&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.subareolar"
+										value="breast.left.subareolar" />breast.left.subareolar&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.subareolar"
+										value="breast.right.subareolar" />breast.right.subareolar&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td align="center">One view only</td>
+								<td>
+									<input type="radio" name="HemsphereViewCS" id="UH" value="Upper_hemisphere" />Upper
+									Hemisphere&nbsp;
+									<input type="radio" name="HemsphereViewCS" id="LH" value="Lower_hemisphere" />Lower
+									Hemisphere&nbsp;<br>
+									<input type="radio" name="HemsphereViewCS" id="OH" value="Outer_hemisphere" />Outer
+									Hemisphere&nbsp;&nbsp;&nbsp;
+									<input type="radio" name="HemsphereViewCS" id="IH" value="Inner_hemisphere" />Inner
+									Hemisphere&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>Size</td>
+								<td colspan="2">
+									<input type="radio" name="SizeCS" id="<1 cm" value="<1 cm" />&lt;1.0 cm&nbsp;
+									<input type="radio" name="SizeCS" id="1-2 cm" value="1-2 cm" />1-2 cm&nbsp;
+									<input type="radio" name="SizeCS" id="2-3 cm" value="2-3 cm" />2-3 cm&nbsp;
+									<input type="radio" name="SizeCS" id="3-4 cm" value="3-4 cm" />3-4 cm&nbsp;
+									<input type="radio" name="SizeCS" id=">4 cm" value=">4 cm" />&gt;4 cm
+								</td>
+							</tr>
+							<tr>
+								<td>Shape</td>
+								<td colspan="2">
+									<input type="radio" name="ShapeCS" id="Round"
+										value="Spherical, ball-shaped, circular, or globular." />Round&nbsp;
+									<input type="radio" name="ShapeCS" id="OvalShape"
+										value="Elliptical or egg-shaped (may include 2 or 3 undulations, i.e., 'gently lobulated' or 'macrolobulated')" />Oval
+									Shape&nbsp;
+									<input type="radio" name="ShapeCS" id="LobulatedShape"
+										value="The presence of greater than three lobulations is an indeterminate feature. Irregular shape is suspicious of malignancy. The margin of the lesion reflects the demarcation of the mass with surrounding tissue. It can be smooth, micro lobulated, irregular or spiculated." />Lobulated
+									Shape&nbsp;
+									<input type="radio" name="ShapeCS" id="IrregularShape"
+										value="Neither round nor oval" />Irregular Shape
+								</td>
+							</tr>
+							<tr>
+								<td>Margins</td>
+								<td colspan="2">
+									<input type="radio" name="MarginCS" id="CircumscribedMargin"
+										value="At least 75%% of the margin is sharply demarcated, with an abrupt transition between the lesion and surrounding tissue." />Circumscribed
+									Margin&nbsp;
+									<input type="radio" name="MarginCS" id="MicrolobulatedMargin"
+										value=" margin characterized by short-cycle undulations." />Microlobulated
+									Margin&nbsp;
+									<input type="radio" name="MarginCS" id="ObscuredMargin"
+										value="ObscuredMargin" />Obscured Margin&nbsp;
+									<input type="radio" name="MarginCS" id="IndistinctMargin"
+										value="No clear demarcation of the entire margin or any portion of it from the surrounding tissue." />Indistinct
+									Margin&nbsp;
+									<input type="radio" name="MarginCS" id="SpiculatedMargin"
+										value="Margin is characterized by lines radiating from the mass." />Spiculated
+									Margin
+								</td>
+							</tr>
+							<tr>
+								<td>Density</td>
+								<td colspan="2">
+									<input type="radio" name="AbnormalityDensityCS" id="HighDensity"
+										value="X-ray attenuation of the mass is grater than the expected attenuation of an equal volume of fibroglandular breast tissue." />High
+									Density&nbsp;
+									<input type="radio" name="AbnormalityDensityCS" id="EqualDensity"
+										value="X-ray attenuation of the mass is the same as the expected attenuation of an equal volume of fibroglandular breast tissue." />Equal
+									Density&nbsp;
+									<input type="radio" name="AbnormalityDensityCS" id="LowDensity"
+										value="X-ray attenuation of the mass is less than the expected attenuation of an equal volume of fibroglandular breast tissue." />Low
+									Density&nbsp;
+									<input type="radio" name="AbnormalityDensityCS" id="FatContaining"
+										value="Includes all masses containing fat, such as oil cyst, lipoma, or galactocele as well as mixeddensity lesions such as hamartoma." />Fat-Containing<br>
+								</td>
+							</tr>
+						</table>
+						<div align="center">
+							<br><input type="button" value="確定" id="mass" name="RID39055" onclick="check(this)" />
+						</div>
+					</form>
+				</div>
+			</td>
+		</tr>
+	</table>
+</body>
+
+</html>

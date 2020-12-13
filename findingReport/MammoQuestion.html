@@ -1,0 +1,129 @@
+<html>
+
+<head>
+	<style>
+		table,
+		tr,
+		td {
+			border: 2px solid black;
+			border-collapse: collapse;
+		}
+
+		.tab {
+			overflow: hidden;
+			background-color: #f1f1f1;
+		}
+
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+		.w3-red,
+		.w3-hover-red:hover {
+			background-color: white !important
+		}
+
+		.tabcontent {
+			padding: 6px 12px;
+			border: 1px solid #ccc;
+			border-top: none;
+		}
+	</style>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<script language="JavaScript" type="text/javascript" src="..\js\xmlOutput.js"></script>
+	<script language="JavaScript" type="text/javascript" src="..\js\jsonObservation.js"></script>
+</head>
+
+<body>
+	<table align="center">
+		<tr bgcolor="yellow">
+			<td align="center">
+				Conclussion
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<div id="QuestionCheck" class="tabcontent">
+					<form id="QuestionCheck" name="QuestionCheck" style="text-align: center">
+						<table align="center">
+							<tr>
+								<td>
+									<input type="radio" id="Category0" name="Category" value="Category 0:
+									Need Additional Imaging Evaluation">Category 0:Need Additional Imaging Evaluation<br />
+									<input type="radio" id="Category3" name="Category" value="Category 3:
+									Probably benign Finding - Short Interval Follow-up Is Suggested">Category 3:
+									Probably benign Finding - Short Interval Follow-up Is Suggested<br />
+									<input type="radio" id="Category4" name="Category" value="Category 4:
+									Suspicious Abnormality - Biopsy Should be Considered">Category 4:
+									Suspicious Abnormality - Biopsy Should be Considered<br />
+									&nbsp;&nbsp;&nbsp;<input type="radio" id="Category40" name="Category4"
+										value="Low Suspicion">Low
+									Suspicion
+									&nbsp;<input type="radio" id="Category41" name="Category4" value="Intermediate
+									Suspicion">Intermediate Suspicion
+									&nbsp;<input type="radio" id="Category42" name="Category4" value="Moderate
+									Suspicion">Moderate Suspicion<br />
+									<input type="radio" id="Category5" name="Category" value="Category 5:
+									Highly Suggestive of malignancy - Appropriate Action Should Be Taken">Category 5:
+									Highly Suggestive of malignancy - Appropriate Action Should Be Taken<br />
+								</td>
+							</tr>
+						</table>
+						<table align="center">
+							<tr>
+								<td>
+									Q1：Retraction of the skin and/or nipple：
+									<input name="RetractionSkin" id="RetractionSkin_0" type="checkbox"
+										value="Retraction of the skin and/or nipple of right breast" />Rt.&nbsp;
+									<input name="RetractionSkin" id="RetractionSkin_1" type="checkbox"
+										value="Retraction of the skin and/or nipple of left breast" />Lt.<br />
+									Q2：Thickening of the skin：
+									<input name="ThickeningSkin" id="ThickeningSkin_0" type="checkbox"
+										value="Thickening of the skin of right breast" />Rt.&nbsp;
+									<input name="ThickeningSkin" id="ThickeningSkin_1" type="checkbox"
+										value="Thickening of the skin of left breast" />Lt.<br />
+									Q3：Dilated lactiferous ducts：
+									<input name="DilatedLactiferous" id="DilatedLactiferous_0" type="checkbox"
+										value="Dilated lactiferous ducts of right breast" />Rt.&nbsp;
+									<input name="DilatedLactiferous" id="DilatedLactiferous_1" type="checkbox"
+										value="Dilated lactiferous ducts of left breast" />Lt.<br />
+									Q4：Dense or enlarged axillary LNs：
+									<input name="EnlargedAxillary" id="EnlargedAxillary_0" type="checkbox"
+										value="Dense or enlarged axillary LNs of right breast" />Rt.&nbsp;
+									<input name="EnlargedAxillary" id="EnlargedAxillary_1" type="checkbox"
+										value="Dense or enlarged axillary LNs of left breast" />Lt.<br />
+									Q5：Others：
+									<input id="Q5_answer" type="text" />
+								</td>
+							</tr>
+						</table>
+						<div align="center">
+							<br><input type="button" value="確定" id="QuestionCheck" name="RID34261"
+								onclick="check(this)" />
+						</div>
+					</form>
+				</div>
+			</td>
+		</tr>
+	</table>
+	<script>
+		var ArrayFID;
+		getsession();
+		function getsession() {
+			ArrayFID = sessionStorage.getItem('findingID');
+		}
+	</script>
+</body>
+
+</html>

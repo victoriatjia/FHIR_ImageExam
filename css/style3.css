@@ -1,0 +1,234 @@
+	#allcanvas{
+		top: 3%;
+		margin: auto;
+		position: relative;
+	}
+	
+	#myCanvas {
+		position: absolute;
+		cursor: pointer;
+	}
+
+	#drawCanvas {
+		position: absolute;
+		cursor: pointer;
+	}
+	
+	#smallCanvas {
+	  position: absolute;
+	  top: 4%;
+	  right: 0.5%;
+	}
+	
+	#myCanvas{
+		border:2px solid #404040;
+	}
+	
+	#slidezoom {
+		width: 230px;
+		position: absolute;
+		top: 370px;
+		left: 1100px;
+	}
+
+	.slider {
+		-webkit-appearance: none;
+		height: 15px;
+		border-radius: 5px;
+		border: none;
+		background-color: rgba(255, 255, 255, 0.2);
+		outline: none;
+		-webkit-transition: .2s;
+		transition: opacity .2s;
+	}
+
+	.slider:hover {
+		opacity: 1;
+	}
+
+	.slider::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 25px;
+		height: 25px;
+		border-radius: 50%;
+		background: #8f7318;
+		cursor: pointer;
+	}
+
+	.slider::-moz-range-thumb {
+		width: 25px;
+		height: 25px;
+		border-radius: 50%;
+		background: red;
+		cursor: pointer;
+	}
+	
+	.column {
+		float: left;
+		height: 100%;
+	}
+
+	.row:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	
+	#nav {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		width: 50px;
+		background-color: black;
+	}
+	
+	#nav ul{
+		list-style-type: none;
+		padding: 0px;
+		background-color: black;
+		color: gold;
+		list-style:none;
+		position:absolute;
+		left:-9999px; 
+	}
+	
+	#nav ul li{
+		padding: 4px 0px 4px 4px;
+	}
+	
+	#nav li{
+		display: block;
+		padding: 9px;
+		text-decoration: none;
+	}
+	
+	li:hover{
+		background-color: #999966;
+		color: black;
+	}
+	
+	#nav li:hover .ddl1{ 
+		top: 8;
+		left:58px;
+	}
+	
+	#nav li:hover .ddl2{ 
+		top: 56;
+		left:58px;
+	}
+	
+	#nav li:hover .ddl3{ 
+		top: 104;
+		left:58px;
+	}
+	
+	#nav li:hover .ddl4{ 
+		top: 152;
+		left:58px;
+	}
+	
+	#nav li:hover .ddl5{ 
+		top: 200;
+		left:58px;
+	}
+	
+	input {
+		padding: 2px;
+		margin: 8px 0;
+		display: inline-block;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		box-sizing: border-box;
+	}
+	
+	button[type=button] {
+		background-color: rgba(255, 255, 255, 0.3);
+		color: white;
+		margin: 8px;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		outline: none;
+		box-shadow: 0 1px #666;
+	}
+	
+	button[type=button]:hover {
+		background-color: #8f7318;
+	}
+	
+	button[type=button]:active {
+		box-shadow: 0 0.5px #999;
+		transform: translateY(4px);
+	}
+	
+	.absolutePosition{
+		position: absolute;
+		top: 10px;
+		left: 10px;
+	}
+	
+	.imgIcon{
+		width: 30;
+		height: 30;
+		margin: auto;
+		display: block;
+	}
+	
+	.strokeWidthImg{
+		width: 90;
+		height: 16;
+	}
+	
+	.fontSize{
+		font-size: 14px;
+	}
+	
+	/* The Modal (background) */
+	.modal {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 1; /* Sit on top */
+		/* padding: auto; /* Location of the box */ 
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow: auto; /* Enable scroll if needed */
+		background-color: rgb(0,0,0); /* Fallback color */
+		background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+
+	.modal-content {
+		background-color: #fefefe;
+		margin: auto;
+		padding: 10px;
+		border: 1px solid #888;
+		width: 50%;
+	}
+	
+	.close {
+		color: #aaaaaa;
+		float: right;
+		font-size: 28px;
+		font-weight: bold;
+	}
+
+	.close:hover,
+	.close:focus {
+		color: #000;
+		text-decoration: none;
+		cursor: pointer;
+	}
+	
+	table, td, th {
+	  border: 1px solid black;
+	}
+
+	table {
+	  border-collapse: collapse;
+	}
+	
+	body{
+		background-color: black;
+	}

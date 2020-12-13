@@ -1,0 +1,140 @@
+<html>
+
+<head>
+	<style>
+		table,
+		tr,
+		td {
+			border: 2px solid black;
+			border-collapse: collapse;
+		}
+
+		.tab {
+			overflow: hidden;
+			background-color: #f1f1f1;
+		}
+
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+		.w3-red,
+		.w3-hover-red:hover {
+			background-color: white !important
+		}
+
+		.tabcontent {
+			padding: 6px 12px;
+			border: 1px solid #ccc;
+			border-top: none;
+		}
+	</style>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<script language="JavaScript" type="text/javascript" src="..\js\xmlOutput.js"></script>
+	<script language="JavaScript" type="text/javascript" src="..\js\jsonObservation.js"></script>
+</head>
+
+<body>
+	<table align="center">
+		<tr bgcolor="yellow">
+			<td align="center">
+				Calcifications
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<div id="Calcifications" class="tabcontent">
+					<form id="calcifications" name="calcifications" style="text-align: center">
+						<table align="center">
+							<tr>
+								<td colspan="3">
+									<input id="RT" type="radio" name="main" value="右側" />Rt.&nbsp;
+									<input id="LT" type="radio" name="main" value="左側" />Lt.&nbsp;
+									<input id="MU" type="radio" name="main" value="multiple, unilateral" />Multiple,
+									Unilateral&nbsp;
+									<input id="MB" type="radio" name="main" value="multiple, bilateral" />Multiple,
+									Bilateral<br />
+								</td>
+							</tr>
+							<tr>
+								<td rowspan="2" align="center">Location</td>
+								<td colspan="2">
+									<input type="radio" name="BreastSiteCS" id="C50.0" value="Nipple" />Nipple&nbsp;
+									<input type="radio" name="BreastSiteCS" id="C50.1"
+										value="Central portion of the breast" />Central portion of the breast&nbsp;
+									<input type="radio" name="BreastSiteCS" id="C50.2" value="UIQ" />UIQ&nbsp;
+									<input type="radio" name="BreastSiteCS" id="C50.3" value="LIQ" />LIQ&nbsp;
+									<input type="radio" name="BreastSiteCS" id="C50.4" value="UOQ" />UOQ&nbsp;
+									<input type="radio" name="BreastSiteCS" id="C50.5" value="LOQ" />LOQ&nbsp;<br>
+									<input type="radio" name="BreastSiteCS" id="C50.6" value="Axillary tail" />Axillary
+									tail
+									<input type="radio" name="BreastSiteCS" id="C50.8"
+										value="Overlapping lesion of breast" />Overlapping lesion of breast&nbsp;
+									<input type="radio" name="BreastSiteCS" id="C50.9"
+										value="Breast, not otherwise specified (NOS)" />Breast, not otherwise specified
+									(NOS)&nbsp;
+									<input type="radio" name="BreastSiteCS" id="C50.10"
+										value="sub-areolar" />sub-areolar&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td align="center">One view only</td>
+								<td>
+									<input type="radio" name="HemsphereViewCS" id="UH" value="upper hemisphere" />Upper
+									Hemisphere&nbsp;
+									<input type="radio" name="HemsphereViewCS" id="LH" value="lower hemisphere" />Lower
+									Hemisphere&nbsp;<br>
+									<input type="radio" name="HemsphereViewCS" id="OH" value="outer hemisphere" />Outer
+									Hemisphere&nbsp;&nbsp;&nbsp;
+									<input type="radio" name="HemsphereViewCS" id="IH" value="inner hemisphere" />Inner
+									Hemisphere&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>Distribution</td>
+								<td colspan="2">
+									<input type="radio" name="DistributionCS" id="DO1"
+										value="Grouped" />Grouped&nbsp;&nbsp;&nbsp;&nbsp;
+									<input type="radio" name="DistributionCS" id="DO2" value="Linear" />Linear&nbsp;
+									<input type="radio" name="DistributionCS" id="DO3"
+										value="Segmental" />Segmental&nbsp;<br />
+									<input type="radio" name="DistributionCS" id="DO4" value="Regional" />Regional&nbsp;
+									<input type="radio" name="DistributionCS" id="DO5" value="Diffuse" />Diffuse
+								</td>
+							</tr>
+							<tr>
+								<td>Morphology</td>
+								<td colspan="2">
+									<input type="radio" name="MorphologyCS" id="MO1" value="Amorphous" />Amorphous&nbsp;
+									<input type="radio" name="MorphologyCS" id="MO2"
+										value="Coarse Heterogeneous" />Coarse Heterogeneous&nbsp;<br />
+									<input type="radio" name="MorphologyCS" id="MO3" value="Fine Pleomorphic" />value
+									Pleomorphic
+									<input type="radio" name="MorphologyCS" id="MO4"
+										value="Fine Linear-Branching" />Fine Linear Branching</td>
+			</td>
+		</tr>
+
+	</table>
+	<div align="center">
+		<br><input type="button" value="確定" id="calcifications" name="RID34642" onclick="check(this)" />
+	</div>
+	</form>
+	</div>
+	</td>
+	</tr>
+	</table>
+</body>
+
+</html>
