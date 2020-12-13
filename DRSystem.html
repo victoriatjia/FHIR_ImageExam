@@ -1,0 +1,481 @@
+<!DOCTYPE HTML>s
+<html>
+<head>
+	<style>
+		.Header {
+			margin: 10px auto;
+			padding: 15px 25px;
+			border-left: 6px solid #1c6dd9;
+			display: flex;
+			align-items: center;
+		}
+
+		.Header .Title {
+			float: left;
+			width: 100px;
+			color: white;
+		}
+
+		.Name {
+			float: left;
+			width: 120px;
+		}
+
+		.L1> div {
+			float: left;
+			margin: 50px 10px 5px 0;
+			padding: 5px;
+		}
+
+		table, td, th {
+			border: 1px solid black;
+		}
+
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			font-size: 18px;
+			background-color: #F6F6F6;
+		}
+
+		th {
+			text-align: center;
+			vertical-align: middle;
+			font-size: 25px;
+			font-weight: bold;
+			height: 50px;
+		}
+	</style>
+	<title>DICOM VIEWER</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:700italic,400,300,700' rel='stylesheet'
+		type='text/css'>
+	<!--[if lte IE 8]><script src="js/html5shiv.js"></script><![endif]-->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="js/skel.min.js"></script>
+	<script src="js/skel-panels.min.js"></script>
+	<script src="js/init.js"></script>
+	<script src="js/functions.js"></script>
+	<script src="js/jsonObservation.js"></script>
+	<noscript>
+		<link rel="stylesheet" href="css/skel-noscript.css" />
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/style-desktop.css" />
+		<link rel="stylesheet" href="css/style2.css" />
+	</noscript>
+</head>
+
+<body class="homepage">
+	<!-- Header -->
+		<div id="header">
+			<div class="container">
+
+				<!-- Logo -->
+				<div id="logo">
+					<h1><a href="#">DICOM viewer</a></h1>
+				</div>
+
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+						<li><a href="index.html">HOMEPAGE</a></li>
+						<li ><a href="left-sidebar.html">Picture</a></li>
+						<li class="active"><a href="DRSystem.html">Diagnostic Report System</a></li>
+
+					</ul>
+				</nav>
+
+			</div>
+		</div>
+	<!-- Header -->
+
+	<!-- Main -->
+	<div id="main" class="container">
+		<div class="row">
+			<div class="3u">
+				<section class="sidebar">
+					<div class="Header">
+						<!-- <div class="Title">Display Diagnostic Report</div> -->
+						<h2 align="center" style="color:white">Display Diagnostic Report:</h2>
+					</div>
+					<div class="Name" style="color:white">Condition：</div>
+					<div class="Value">
+						<select id="conditionPatient" onchange="jsFunction(this);">
+							<option value="none"></option>
+							<option value="Patient ID">Patient ID</option>
+							<!-- <option value="Organization">Organization</option> -->
+						</select>
+					</div>
+					<div class="Name" style="color:white">Value: </div>
+					<div id="valueBox"></div>
+
+					<button type="button" onclick="searchPatient()">搜尋</button>
+
+				</section>
+			</div>
+
+			<div class="9u skel-cell-important">
+				<section>
+					<header>
+						<h2 style="color:white">Diagnostic Report List</h2>
+					</header>
+					<div id="listPatient"></div>
+					<br><br>
+					<div id="contactBox"></div>
+					<br><br>
+					<div id="findingBox"></div>
+				</section>
+			</div>
+
+		</div>
+	</div>
+	<!-- Main -->
+
+	<!-- Copyright -->
+	<div id="copyright" class="container">
+		Design by: Jeshika, Thalia, Victoria
+	</div>
+	<script>
+		var patientObservation, findingObservation;
+		var previousRow, previousRow2, rowmaxNum = 20;
+		function setSession(sname, svalue) {
+			sessionStorage.setItem(sname, svalue);
+			window.open("systemA.html", "_blank");
+		}
+
+		function jsFunction(value) {
+			var valueBox = document.getElementById("valueBox");
+			clearDiv(valueBox);
+			var input = document.createElement("input");
+			input.id = "textValue";
+			valueBox.appendChild(input);
+		}
+		function clearDiv(elementID) {
+			elementID.innerHTML = "";
+		}
+		function searchPatient() {
+			clearDiv(document.getElementById("contactBox"));
+			clearDiv(document.getElementById("listPatient"));
+			var conditionValue = '';
+			var condition = document.getElementById("conditionPatient").value;
+			conditionValue = document.getElementById("textValue").value;
+			if (conditionValue == "" || conditionValue == " ") {
+				alert("Please fill the input text!");
+			}
+			else {
+				var strUrl;
+				switch (condition) {
+					case "Patient ID":
+						strUrl = fhir.url + "DiagnosticReport?subject=" + conditionValue;
+						break;
+				}
+				getJSON(strUrl, 0, "Patient");
+			}
+		}
+		function getJSON(strUrl, firstrowNum, type) {
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', strUrl, true);//https://orthanc.dicom.tw/dicom-web/studies/1.3.6.1.4.1.14519.5.2.1.9999.103.2445110399502685110179049624124
+			//xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+			xhr.setRequestHeader("Content-type", 'application/json');
+			xhr.onreadystatechange = function () {
+				if (this.readyState == 4) // && this.status == 201) 
+				{
+					// if (type == "Patient") {
+					patientObservation = JSON.parse(this.responseText);
+					// }
+					// else if (type == "Finding") findingObservation = JSON.parse(this.responseText);
+
+					if (patientObservation != undefined && patientObservation.resourceType == "OperationOutcome") {
+						var errStr = "";
+						for (var i = 0; i < patientObservation.issue.length; i++) {
+							errStr += patientObservation.issue[i].diagnostics + '<br>';
+						}
+						alert(errStr);
+					}
+					else if (patientObservation.resourceType == "Bundle" && patientObservation.total == 0) alert("Data is not exist!");
+					else {
+						setTablePatient(patientObservation, firstrowNum, type);
+					}
+				}
+			}
+			xhr.send();
+		}
+		function setTablePatient(patientObservation, firstrowNum, type) {
+			if (type == "Patient") {
+				clearDiv(document.getElementById("contactBox"));
+				clearDiv(document.getElementById("listPatient"));
+				clearDiv(document.getElementById("findingBox"));
+				var condition = document.getElementById("conditionPatient").value;
+				var table = document.createElement("table");
+				table.id = "tablePatient";
+				table.style.border = "3px solid #000"
+				var bundle;
+				if (patientObservation.entry != undefined) {
+					bundle = patientObservation;
+					patientObservation = patientObservation.entry[0].resource;
+				}
+				var cellText = ["No", "Id", "Subject", "Encounter", "Practitioner", "Last Updated"];
+				setfirstRow(table, cellText);
+				if (bundle != undefined) {
+					for (var i = 0; i < bundle.entry.length; i++) {
+						displayIdentifier(table, bundle.entry[i].resource, firstrowNum);
+					}
+					if (bundle.link != undefined && bundle.link.length > 1) {
+						var row = document.createElement("tr");
+						var btnNext, btnPrev;
+						for (var i = 0; i < bundle.link.length; i++) {
+							if (bundle.link[i].relation == "next") {
+								btnNext = document.createElement("BUTTON");
+								btnNext.innerHTML = "next";
+								btnNext.value = bundle.link[i].url;
+								btnNext.onclick = function () { getJSON(this.value, firstrowNum + rowmaxNum) };
+							}
+							if (bundle.link[i].relation == "previous") {
+								btnPrev = document.createElement("BUTTON");
+								btnPrev.innerHTML = "previous";
+								btnPrev.value = bundle.link[i].url;
+								btnPrev.onclick = function () { getJSON(this.value, firstrowNum - rowmaxNum) };
+
+							}
+						}
+						if (btnPrev != undefined) row.appendChild(btnPrev);
+						if (btnNext != undefined) row.appendChild(btnNext);
+						table.appendChild(row);
+					}
+				}
+				else
+					displayIdentifier(table, patientObservation, firstrowNum);
+
+				document.getElementById("listPatient").appendChild(table);
+			}
+			if (type == "Finding") {
+				clearDiv(document.getElementById("findingBox"));
+				var table = document.createElement("table");
+				table.id = "tableFinding";
+
+				var row2 = document.createElement("tr");
+				var cell = document.createElement("th");
+				cell.style.backgroundColor = '#e6e6e6';
+				cell.colSpan = "2";
+				cell.innerHTML = "Finding";
+				row2.appendChild(cell);
+				table.appendChild(row2);
+
+				var singlePatient = (patientObservation.entry == undefined) ? patientObservation : patientObservation.entry[id - 1].resource;
+				var gname = ["ID", "Last updated", "Finding Type", "Annotation"];
+				var gvalue = [singlePatient.id, singlePatient.meta.lastUpdated];
+				var FindingTypeValue = "", AnnotationValue = "";
+				for (var i = 0; i < singlePatient.identifier.length; i++) {
+					if (i != 0) FindingTypeValue += ',<br>';
+					FindingTypeValue += singlePatient.identifier[i].value;
+				}
+				for (var i = 0; i < singlePatient.derivedFrom.length; i++) {
+					if (i != 0) AnnotationValue += ',<br>';
+					var str = singlePatient.derivedFrom[i].reference.split("/");
+
+					AnnotationValue += "<a target='_blank' href='systemA.html?AnnotationID=" + str[str.length - 1] + "'>" + str[str.length - 1];
+				}
+				gvalue.push(FindingTypeValue);
+				gvalue.push(AnnotationValue);
+				for (var i = 0; i < gname.length; i++) {
+					row2 = document.createElement("tr");
+					cell = document.createElement("td");
+					cell.innerHTML = gname[i];
+					row2.appendChild(cell);
+
+					cell = document.createElement("td");
+					cell.innerHTML = gvalue[i];
+					row2.appendChild(cell);
+					table.appendChild(row2);
+				}
+				findingBox.appendChild(table);
+
+				table = document.createElement("table");
+				table.id = "tableFinding";
+
+				row2 = document.createElement("tr");
+				cell = document.createElement("th");
+				cell.style.backgroundColor = '#e6e6e6';
+				cell.colSpan = "2";
+				cell.innerHTML = "Finding Result";
+				row2.appendChild(cell);
+				table.appendChild(row2);
+
+				for (var i = 0; i < singlePatient.component.length; i++) {
+					for (var j = 0; j < singlePatient.component[i].code.coding.length; j++) {
+						row2 = document.createElement("tr");
+						cell = document.createElement("td");
+						var str = singlePatient.component[i].code.coding[j].system.split("/");
+
+						cell.innerHTML = str[str.length - 1];
+						row2.appendChild(cell);
+
+						cell = document.createElement("td");
+						var divStr = "<a target='_blank' href='" + singlePatient.component[i].code.coding[j].system + "'>" + singlePatient.component[i].code.coding[j].code;
+						cell.innerHTML = divStr;
+						row2.appendChild(cell);
+						table.appendChild(row2);
+					}
+				}
+				findingBox.appendChild(table);
+			}
+		}
+		function setfirstRow(table, cellText) {
+			var row = document.createElement("tr");
+			for (var i = 0; i < cellText.length; i++) {
+				var cell = document.createElement("th");
+				cell.style.backgroundColor = '#e6e6e6';
+				cell.innerHTML = cellText[i];
+				row.appendChild(cell);
+			}
+			table.appendChild(row);
+		}
+		function displayIdentifier(table, patientObservation, firstrowNum) {
+			var condition = document.getElementById("conditionPatient").value;
+			var row = document.createElement("tr");
+			var cell0 = document.createElement("td");
+			cell0.innerHTML = (firstrowNum + table.rows.length);
+			row.appendChild(cell0);
+
+			var cell = document.createElement("td");
+			cell.innerHTML = patientObservation.id;
+			row.appendChild(cell);
+
+			cell = document.createElement("td");
+			cell.innerHTML = patientObservation.subject.reference;
+			row.appendChild(cell);
+
+			cell = document.createElement("td");
+			cell.innerHTML = patientObservation.encounter.reference;
+			row.appendChild(cell);
+
+			cell = document.createElement("td");
+			cell.innerHTML = "";
+			for (var i = 0; i < patientObservation.resultsInterpreter.length; i++) {
+				if (i != 0) cell1.innerHTML += ',<br>';
+				cell.innerHTML += patientObservation.resultsInterpreter[i].reference;
+			}
+			row.appendChild(cell);
+
+			cell = document.createElement("td");
+			cell.innerHTML = patientObservation.meta.lastUpdated;
+			row.appendChild(cell);
+
+
+			row.onclick = createClickHandler2(row, firstrowNum);
+
+			table.appendChild(row);
+		}
+		var createClickHandler2 = function (row, firstrowNum) {
+			return function () {
+				var cell = row.getElementsByTagName("td")[0];
+				var id = cell.innerHTML - firstrowNum;
+				//alert("id:" + id);
+
+				if (previousRow != undefined) previousRow.style.backgroundColor = 'white';
+				row.style.backgroundColor = '#cccccc';
+				previousRow = row;
+
+				var contactBox = document.getElementById("contactBox");
+				clearDiv(contactBox);
+				//contactBox.style.backgroundColor = "white";
+
+				var singlePatient = (patientObservation.entry == undefined) ? patientObservation : patientObservation.entry[id - 1].resource;
+
+				var table = document.createElement("table");
+				table.id = "tablegeneralDR";
+
+				var row2 = document.createElement("tr");
+				var cell = document.createElement("th");
+				cell.style.backgroundColor = '#e6e6e6';
+				cell.colSpan = "2";
+				cell.innerHTML = "General Information";
+				row2.appendChild(cell);
+				table.appendChild(row2);
+
+				var gname = ["ID", "Patient", "Encounter", "Practitioner", "Last updated"];
+				var gvalue = [singlePatient.id, singlePatient.subject.reference, singlePatient.encounter.reference];
+				var PractitionerValue = "";
+				for (var i = 0; i < singlePatient.resultsInterpreter.length; i++) {
+					if (i != 0) PractitionerValue += ',<br>';
+					PractitionerValue += singlePatient.resultsInterpreter[i].reference;
+				}
+				gvalue.push(PractitionerValue);
+				gvalue.push(singlePatient.meta.lastUpdated);
+				for (var i = 0; i < 5; i++) {
+					row2 = document.createElement("tr");
+					cell = document.createElement("td");
+					cell.innerHTML = gname[i];
+					row2.appendChild(cell);
+
+					cell = document.createElement("td");
+					cell.innerHTML = gvalue[i];
+					row2.appendChild(cell);
+					table.appendChild(row2);
+				}
+				contactBox.appendChild(table);
+
+				table = document.createElement("table");
+				table.id = "tableresultDR";
+				row2 = document.createElement("tr");
+				cell = document.createElement("th");
+				cell.style.backgroundColor = '#e6e6e6';
+				cell.innerHTML = "Result Information";
+				row2.appendChild(cell);
+				table.appendChild(row2);
+
+				var ResultValue = "";
+				for (var i = 0; i < singlePatient.result.length; i++) {
+					row2 = document.createElement("tr");
+					cell = document.createElement("td");
+					cell.innerHTML = singlePatient.result[i].reference;
+					row2.appendChild(cell);
+					row2.onclick = displayFinding(row2);
+					table.appendChild(row2);
+				}
+				contactBox.appendChild(table);
+
+				table = document.createElement("table");
+				table.id = "tableconclussionDR";
+				row2 = document.createElement("tr");
+				cell = document.createElement("th");
+				cell.style.backgroundColor = '#e6e6e6';
+				cell.innerHTML = "Conclussion Information";
+				row2.appendChild(cell);
+				table.appendChild(row2);
+
+				var ResultValue = "";
+				for (var i = 0; i < singlePatient.conclusionCode[0].coding.length; i++) {
+					row2 = document.createElement("tr");
+					cell = document.createElement("td");
+					cell.innerHTML = singlePatient.conclusionCode[0].coding[i].display;
+					row2.appendChild(cell);
+					table.appendChild(row2);
+				}
+				contactBox.appendChild(table);
+			};
+		};
+
+		var displayFinding = function (row) {
+			return function () {
+				var cell = row.getElementsByTagName("td")[0];
+				var id = cell.innerHTML;
+
+				if (previousRow2 != undefined) previousRow2.style.backgroundColor = 'white';
+				row.style.backgroundColor = '#cccccc';
+				previousRow2 = row;
+
+				strUrl = fhir.url + id;
+				var singleFinding = getJSON(strUrl, 0);
+
+				//alert(id)
+				getJSON(strUrl, 0, "Finding");
+			}
+		}
+	</script>
+
+</body>
+
+</html>
