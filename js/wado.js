@@ -1,5 +1,3 @@
-//hakafkjfhskd
-
 var DICOMrootURL = 'http://203.64.84.218:8080/orthanc'; //'http://203.64.84.218:8042'//'https://orthanc.dicom.tw'
 
 var getJSON = function (url, last, dataShowed, callback) {
