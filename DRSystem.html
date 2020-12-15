@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>s
 <html>
+
 <head>
 	<style>
 		.Header {
@@ -21,29 +22,37 @@
 			width: 120px;
 		}
 
-		.L1> div {
+		.L1>div {
 			float: left;
 			margin: 50px 10px 5px 0;
 			padding: 5px;
 		}
 
-		table, td, th {
-			border: 1px solid black;
+		table,
+		td,
+		th {
+			border-bottom: 1pt solid black;
+			/* border: 1px solid black; */
 		}
 
 		table {
 			border-collapse: collapse;
+			border: 0;
 			width: 100%;
 			font-size: 18px;
 			background-color: #F6F6F6;
 		}
 
 		th {
-			text-align: center;
+			text-align: left;
 			vertical-align: middle;
 			font-size: 25px;
 			font-weight: bold;
 			height: 50px;
+		}
+
+		tr.noBorder td {
+			border: 0;
 		}
 	</style>
 	<title>DICOM VIEWER</title>
@@ -69,26 +78,26 @@
 
 <body class="homepage">
 	<!-- Header -->
-		<div id="header">
-			<div class="container">
+	<div id="header">
+		<div class="container">
 
-				<!-- Logo -->
-				<div id="logo">
-					<h1><a href="#">DICOM viewer</a></h1>
-				</div>
-
-				<!-- Nav -->
-				<nav id="nav">
-					<ul>
-						<li><a href="index.html">HOMEPAGE</a></li>
-						<li ><a href="left-sidebar.html">Picture</a></li>
-						<li class="active"><a href="DRSystem.html">Diagnostic Report System</a></li>
-
-					</ul>
-				</nav>
-
+			<!-- Logo -->
+			<div id="logo">
+				<h1><a href="#">DICOM viewer</a></h1>
 			</div>
+
+			<!-- Nav -->
+			<nav id="nav">
+				<ul>
+					<li><a href="index.html">HOMEPAGE</a></li>
+					<li><a href="left-sidebar.html">Picture</a></li>
+					<li class="active"><a href="DRSystem.html">Diagnostic Report System</a></li>
+
+				</ul>
+			</nav>
+
 		</div>
+	</div>
 	<!-- Header -->
 
 	<!-- Main -->
@@ -158,6 +167,7 @@
 		function searchPatient() {
 			clearDiv(document.getElementById("contactBox"));
 			clearDiv(document.getElementById("listPatient"));
+			clearDiv(document.getElementById("findingBox"));
 			var conditionValue = '';
 			var condition = document.getElementById("conditionPatient").value;
 			conditionValue = document.getElementById("textValue").value;
@@ -182,21 +192,22 @@
 			xhr.onreadystatechange = function () {
 				if (this.readyState == 4) // && this.status == 201) 
 				{
-					// if (type == "Patient") {
-					patientObservation = JSON.parse(this.responseText);
+					var res = JSON.parse(this.responseText);
+					if (type == "Patient")
+						patientObservation = res;
 					// }
-					// else if (type == "Finding") findingObservation = JSON.parse(this.responseText);
+					else if (type == "Finding") findingObservation = res;
 
-					if (patientObservation != undefined && patientObservation.resourceType == "OperationOutcome") {
+					if (res != undefined && res.resourceType == "OperationOutcome") {
 						var errStr = "";
-						for (var i = 0; i < patientObservation.issue.length; i++) {
-							errStr += patientObservation.issue[i].diagnostics + '<br>';
+						for (var i = 0; i < res.issue.length; i++) {
+							errStr += res.issue[i].diagnostics + '<br>';
 						}
 						alert(errStr);
 					}
-					else if (patientObservation.resourceType == "Bundle" && patientObservation.total == 0) alert("Data is not exist!");
+					else if (res.resourceType == "Bundle" && res.total == 0) alert("Data is not exist!");
 					else {
-						setTablePatient(patientObservation, firstrowNum, type);
+						setTablePatient(res, firstrowNum, type);
 					}
 				}
 			}
@@ -259,7 +270,8 @@
 				var cell = document.createElement("th");
 				cell.style.backgroundColor = '#e6e6e6';
 				cell.colSpan = "2";
-				cell.innerHTML = "Finding";
+				cell.innerHTML = "<u>Finding Report </u>  <h style='font-size:18px'>(*Click annotation id to view the annotation on image)</h>";
+				cell.style.fontSize = "20px";
 				row2.appendChild(cell);
 				table.appendChild(row2);
 
@@ -282,7 +294,8 @@
 				for (var i = 0; i < gname.length; i++) {
 					row2 = document.createElement("tr");
 					cell = document.createElement("td");
-					cell.innerHTML = gname[i];
+					row2.className = "noBorder";
+					cell.innerHTML = gname[i] + ":";
 					row2.appendChild(cell);
 
 					cell = document.createElement("td");
@@ -290,16 +303,14 @@
 					row2.appendChild(cell);
 					table.appendChild(row2);
 				}
-				findingBox.appendChild(table);
-
-				table = document.createElement("table");
-				table.id = "tableFinding";
+				document.getElementById("findingBox").appendChild(table);
 
 				row2 = document.createElement("tr");
 				cell = document.createElement("th");
 				cell.style.backgroundColor = '#e6e6e6';
 				cell.colSpan = "2";
 				cell.innerHTML = "Finding Result";
+				cell.style.fontSize = "20px";
 				row2.appendChild(cell);
 				table.appendChild(row2);
 
@@ -307,9 +318,11 @@
 					for (var j = 0; j < singlePatient.component[i].code.coding.length; j++) {
 						row2 = document.createElement("tr");
 						cell = document.createElement("td");
+						row2.className = "noBorder";
 						var str = singlePatient.component[i].code.coding[j].system.split("/");
 
-						cell.innerHTML = str[str.length - 1];
+						str = str[str.length - 1].split(".html");
+						cell.innerHTML = String.fromCharCode(97 + i) + ". " + str[0] + ":";
 						row2.appendChild(cell);
 
 						cell = document.createElement("td");
@@ -319,7 +332,7 @@
 						table.appendChild(row2);
 					}
 				}
-				findingBox.appendChild(table);
+				document.getElementById("findingBox").appendChild(table);
 			}
 		}
 		function setfirstRow(table, cellText) {
@@ -370,9 +383,9 @@
 		}
 		var createClickHandler2 = function (row, firstrowNum) {
 			return function () {
+				clearDiv(document.getElementById("findingBox"));
 				var cell = row.getElementsByTagName("td")[0];
 				var id = cell.innerHTML - firstrowNum;
-				//alert("id:" + id);
 
 				if (previousRow != undefined) previousRow.style.backgroundColor = 'white';
 				row.style.backgroundColor = '#cccccc';
@@ -380,7 +393,6 @@
 
 				var contactBox = document.getElementById("contactBox");
 				clearDiv(contactBox);
-				//contactBox.style.backgroundColor = "white";
 
 				var singlePatient = (patientObservation.entry == undefined) ? patientObservation : patientObservation.entry[id - 1].resource;
 
@@ -391,7 +403,8 @@
 				var cell = document.createElement("th");
 				cell.style.backgroundColor = '#e6e6e6';
 				cell.colSpan = "2";
-				cell.innerHTML = "General Information";
+				cell.style.textAlign = "center";
+				cell.innerHTML = "System Diagnostic Report";
 				row2.appendChild(cell);
 				table.appendChild(row2);
 
@@ -407,7 +420,8 @@
 				for (var i = 0; i < 5; i++) {
 					row2 = document.createElement("tr");
 					cell = document.createElement("td");
-					cell.innerHTML = gname[i];
+					row2.className = "noBorder";
+					cell.innerHTML = gname[i] + ":";
 					row2.appendChild(cell);
 
 					cell = document.createElement("td");
@@ -417,12 +431,13 @@
 				}
 				contactBox.appendChild(table);
 
-				table = document.createElement("table");
-				table.id = "tableresultDR";
 				row2 = document.createElement("tr");
 				cell = document.createElement("th");
 				cell.style.backgroundColor = '#e6e6e6';
-				cell.innerHTML = "Result Information";
+
+				cell.innerHTML = "<u>Diagnostic Result </u>  <h style='font-size:18px'>(*Click below id to view the finding report)</h>";
+				cell.colSpan = "2";
+				cell.style.fontSize = "20px";
 				row2.appendChild(cell);
 				table.appendChild(row2);
 
@@ -430,6 +445,8 @@
 				for (var i = 0; i < singlePatient.result.length; i++) {
 					row2 = document.createElement("tr");
 					cell = document.createElement("td");
+					row2.className = "noBorder";
+					cell.colSpan = "2";
 					cell.innerHTML = singlePatient.result[i].reference;
 					row2.appendChild(cell);
 					row2.onclick = displayFinding(row2);
@@ -437,12 +454,12 @@
 				}
 				contactBox.appendChild(table);
 
-				table = document.createElement("table");
-				table.id = "tableconclussionDR";
 				row2 = document.createElement("tr");
 				cell = document.createElement("th");
 				cell.style.backgroundColor = '#e6e6e6';
-				cell.innerHTML = "Conclussion Information";
+				cell.innerHTML = "Conclusion";
+				cell.colSpan = "2";
+				cell.style.fontSize = "20px";
 				row2.appendChild(cell);
 				table.appendChild(row2);
 
@@ -450,7 +467,9 @@
 				for (var i = 0; i < singlePatient.conclusionCode[0].coding.length; i++) {
 					row2 = document.createElement("tr");
 					cell = document.createElement("td");
-					cell.innerHTML = singlePatient.conclusionCode[0].coding[i].display;
+					row2.className = "noBorder";
+					cell.colSpan = "2";
+					cell.innerHTML = String.fromCharCode(97 + i) + ". " + singlePatient.conclusionCode[0].coding[i].display;
 					row2.appendChild(cell);
 					table.appendChild(row2);
 				}
@@ -470,7 +489,6 @@
 				strUrl = fhir.url + id;
 				var singleFinding = getJSON(strUrl, 0);
 
-				//alert(id)
 				getJSON(strUrl, 0, "Finding");
 			}
 		}
