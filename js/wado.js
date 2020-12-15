@@ -173,8 +173,10 @@ function populateInstancesList(studyID, seriesID, first, data) {
             li.onclick = function() {
                 var v = this.value;
                 //alert(dcmFiles[v]);
-                var url = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID +
-                "&seriesUID=" + seriesID + "&objectUID=" + dcmFiles[v];
+            //    var url = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + dcmFiles[v];
+            //var url = DICOMrootURL + "/orthanc/dicom-web/studies/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.4.0/series/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.5.0/instances/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.3.0";
+            var url = DICOMrootURL + "/dicom-web/studies/"+ studyID +"/series/" + seriesID + "/instances/" + dcmFiles[v];
+
                 sessionStorage.setItem('index', url);
                 dcmFile = url;
                 getDCM("A");
@@ -188,8 +190,6 @@ function populateInstancesList(studyID, seriesID, first, data) {
         return dcmFiles;
     }
 }
-
-
 
 function drawInnertable(callback, data, studyID, seriesID, first, last, dataShowed, dataType) {
     var datavalue;
@@ -251,6 +251,7 @@ function drawInnertable(callback, data, studyID, seriesID, first, last, dataShow
     img.width = 100;
     img.height = 100;
     img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + datavalue["0020000D"].Value[0] + "&seriesUID=" + datavalue["0020000E"].Value[0] + "&objectUID=" + datavalue["00080018"].Value[0];
+    img.alt = "Preview Not Available"
     var rows = table.getElementsByTagName("tr");
     cell1.innerHTML = first + rows.length - 1;
     cell2.innerHTML = IDValue;
@@ -318,8 +319,8 @@ function downloadFile(studyID, seriesID, instanceID, fileType) {
         url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/?&SOPInstanceUID=' + instanceID;
     }
     else if (fileType == "view") {
-        //var param = "https://orthanc.dicom.tw/dicom-web/studies/" + studyID + "/series/" + seriesID + "/instances/" + instanceID;
-        var param = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + instanceID;
+        var param = "https://orthanc.dicom.tw/dicom-web/studies/" + studyID + "/series/" + seriesID + "/instances/" + instanceID;
+        //var param = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + instanceID;
         param = btoa(param);
         param = encodeURI(param)
         url = "systemA.html?image=" + param;
