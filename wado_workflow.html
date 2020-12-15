@@ -12,6 +12,7 @@
             border-radius: 5px 5px 0 0;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            background-color: #e3e3e3;
         }
 
         .content-table thead tr {
@@ -53,10 +54,53 @@
       
     </style>
     <script src="js/wado.js"></script>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:700italic,400,300,700' rel='stylesheet'
+		type='text/css'>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="js/skel.min.js"></script>
+	<script src="js/skel-panels.min.js"></script>
+	<script src="js/init.js"></script>
+	<script src="js/functions.js"></script>
+	<noscript>
+		<link rel="stylesheet" href="css/skel-noscript.css" />
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/style-desktop.css" />
+		<link rel="stylesheet" href="css/style2.css" />
+	</noscript>
 </head>
 
-<body>
-    <input type="text" id="PatientID" />
+<body class="homepage">
+
+	<!-- Header -->
+	<div id="header">
+		<div class="container">
+
+			<!-- Logo -->
+			<div id="logo">
+				<h1><a href="#">WADO Workflow</a></h1>
+			</div>
+
+			<!-- Nav -->
+			<nav id="nav">
+				<ul>
+					<li><a href="index.html">HOMEPAGE</a></li>
+					<li><a href="left-sidebar.html">Picture</a></li>
+					<li class="active"><a href="wado_workflow.html">WADO Workflow</a></li>
+					<li><a href="DRSystem.html">Diagnostic Report System</a></li>
+				</ul>
+			</nav>
+
+		</div>
+	</div>
+	<!-- Header -->
+
+	<!-- Main -->
+	<div class="container">
+        <br><br><br>
+        <input type="text" id="PatientID" />
     <button onclick="getImagingStudyList()">Get Imaging Study List</button>
     <button onclick="getPatientList()">Get Patient List</button>
     <button onclick="getImage()">Get Image</button>
@@ -72,7 +116,32 @@
         <tbody>
         </tbody>
     </table>
-    <div id="dicomImage" style="width:512px;height:512px;"></div>
+    <!-- <div id="dicomImage" style="width:512px;height:512px;"></div> -->
+        
+	</div>
+    <!-- /Main -->
+    
+	<!-- Footer (底部簽名檔)-->
+	<div id="copyright" class="container">
+		<script>
+			document.write(Getfooter());
+		</script>
+	</div>
+	<!-- Footer -->
+
+
+
+
+
 </body>
+
+
+
+
+
+
+
+
+
 
 </html>
