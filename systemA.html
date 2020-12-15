@@ -110,7 +110,7 @@
 					onkeypress="return writeText(event)">
 			</div>
 			<!-- <input type="range" id="slidezoom" class="slider" min="1" max="800" value="100"> -->
-			<ul id="instancesList"></ul>
+			<ul id="instancesList" style="position: absolute; right:10px;"></ul>
 		</div>
 		
 
@@ -175,7 +175,7 @@
 					dcmFile = dcmFileArray[dicomURL];
 					getDCM("A");
 				} else {
-				var url = DICOMrootURL + 'dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/';
+				var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/';
 					alert(url);
 					getJSON(url, null, null, function (data, last, dataShowed) {
 						dcmFiles = populateInstancesList(studyID, seriesID, 0, data);
@@ -262,13 +262,6 @@
 				}
 
 				document.getElementById("allcanvas").addEventListener("wheel", scrollZoom);
-			}
-
-			function setDCM(instanceID) {
-				var url = DICOMrootURL + "wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + instanceID;
-				sessionStorage.setItem('index',url);
-				dcmFile= url;
-				getDCM("A");
 			}
 
 			function getDCM(system) {

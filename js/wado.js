@@ -169,9 +169,12 @@ function populateInstancesList(studyID, seriesID, first, data) {
             img.height = 100;
             img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + instance["00080018"].Value[0];
             //li.onclick="setDCM("+ j+")";
+            li.value=j;
             li.onclick = function() {
+                var v = this.value;
+                //alert(dcmFiles[v]);
                 var url = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID +
-                "&seriesUID=" + seriesID + "&objectUID=" + instance["00080018"].Value[0];
+                "&seriesUID=" + seriesID + "&objectUID=" + dcmFiles[v];
                 sessionStorage.setItem('index', url);
                 dcmFile = url;
                 getDCM("A");
