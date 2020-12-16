@@ -1,0 +1,13 @@
+.Header {margin: 10px auto;padding: 15px 25px;border-left: 6px solid #1c6dd9;display: flex;align-items: center;}
+.Header .Title {float: left;width: 100px;color: white;}
+
+.Name {float: left;width: 120px;}
+
+.L1>div {float: left;margin: 50px 10px 5px 0;padding: 5px;}
+
+table,td,th {border-bottom: 1pt solid black;}
+
+th {text-align: left;vertical-align: middle;font-size: 20px;font-weight: bold;height: 50px;background-color: #e6e6e6;}
+tr.noBorder td {border: 0;} 
+table {border-collapse: collapse;border: 0;width: 100%;font-size: 18px;background-color: white;}
+
