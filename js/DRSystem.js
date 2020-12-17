@@ -93,7 +93,6 @@ function setTablePatient(patientObservation, firstrowNum, type) {
                         btnPrev.innerHTML = "previous";
                         btnPrev.value = bundle.link[i].url;
                         btnPrev.onclick = function () { getJSON(this.value, firstrowNum - rowmaxNum) };
-
                     }
                 }
                 if (btnPrev != undefined) row.appendChild(btnPrev);

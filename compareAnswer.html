@@ -4,6 +4,7 @@
 		<script src="js/getFHIR_edu.js"></script>
 		<script src="js/xmlOutput.js"></script>
 		<script src="js/getFHIR.js"></script>
+		<script src="js/settings.js"></script>
 	</head>
 		
 	<body>
@@ -179,7 +180,7 @@
 				setPixel();
 			}
 			
-			<!-- Annotation -->
+			//Annotation
 			function drawText(ctxType, x1, y1, val, color, fontstyle){
 				ctxType.beginPath();
 				ctxType.font= fontstyle;
@@ -242,7 +243,7 @@
 					drawEllipse(ctx, (svgEllipse[i][0]+(PanX/scaleRatio)) *scaleRatio, (svgEllipse[i][1]+(PanY/scaleRatio)) *scaleRatio, svgEllipse[i][2]* scaleRatio, svgEllipse[i][3]* scaleRatio, svgEllipse[i][4], svgEllipse[i][5]); 
 				}
 			}
-			<!-- END Annotation -->
+			// END Annotation
 		</script>
 	</body>
 </html>
