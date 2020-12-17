@@ -95,7 +95,7 @@ function getInstances(studyID, seriesID) {
 }
 
 function drawtablelist(studyID, seriesID, first, data, dataType) {
-    clearTable(dataType + "Description", "Preview");
+    clearTable(dataType + " Description", "Preview");
     setcontentNavbar(studyID, seriesID, first, data, dataType);
 
     var callback;
@@ -214,18 +214,30 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
 
     var studyNum=0, seriesNum=0, instanceNum=0;
 
-    var IDValue = '';
+    var description = '';
     if (dataType == "Study") {
         resource = data.resource;
         arr = resource.identifier[0].value.split(':');
         studyNum = arr[2];
         seriesNum = resource.series[0].uid;
         instanceNum = resource.series[0].instance[0].uid;
+        description+="StudyUID: " + studyNum + "<br>";
+        description+="Started Date: " + resource.started + "<br>";
+        var patientStr = resource.subject.reference.split('/');
+        description+="Patient ID: " + patientStr[1] + "<br>";
+        description+="Number of series: " + resource.numberOfSeries + "<br>";
+        description+="Number of instances: " + resource.numberOfInstances + "<br>";
         row.onclick = createClickHandler(row, null);
     } else if (dataType == "Series") {
         studyNum = studyID;
         seriesNum = data.uid;
         instanceNum = data.instance[0].uid;
+        description+="StudyUID: " + studyNum + "<br>";
+        description+="SeriesUID: " + seriesNum + "<br>";
+        description+="number: " + data.number + "<br>";
+        description+="Modality: " + data.modality.code + "<br>";
+        description+="Body Site: " + data.bodySite.display + "<br>";
+        description+="Number of instances: " + resource.numberOfInstances + "<br>";
         row.onclick = createClickHandler(row, null);
     }
 
@@ -236,7 +248,7 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
     img.alt = "Preview Not Available"
     var rows = table.getElementsByTagName("tr");
     cell1.innerHTML = first + rows.length;
-    cell2.innerHTML = IDValue;
+    cell2.innerHTML = description;
     cell3.appendChild(img);
 
     // var limit = (last % 10 == 0) ? 10 : (last % 10);
