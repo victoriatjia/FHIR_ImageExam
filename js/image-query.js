@@ -58,15 +58,22 @@ function getPatientList() {
 }
 
 function getImagingStudyList() {
-    clearTable("Study ID", "Preview");
-    var pID = document.getElementById("PatientID").value;
-    getJSON(DICOMrootURL + '/dicom-web/studies/?&PatientID=' + pID, null, null, function (data, last, dataShowed) {
+    clearTable("Study Description", "Preview");
+    var url = FHIRrootURL + '/ImagingStudy/';
+    var pID = document.getElementById("PatientID").value.trim();
+    if (pID != "") {
+        url += '?subject=' + pID
+    }
+
+    //var url = DICOMrootURL + '/dicom-web/studies/?&PatientID=' + pID;
+    getJSON(url, null, null, function (data, last, dataShowed) {
         drawtablelist(null, null, 0, data, "Study");
+
     });
 }
 
 function getSeries(studyID) {
-    clearTable("Series UID", "Preview");
+    clearTable("Series Description", "Preview");
     var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series';
     getJSON(url, null, null, function (data, last, dataShowed) {
         drawtablelist(studyID, null, 0, data, "Series");
@@ -75,7 +82,7 @@ function getSeries(studyID) {
 
 function getInstances(studyID, seriesID) {
     //https://orthanc.dicom.tw/wado/?requestType=WADO&contentType=image/jpeg&studyUID=1.2.840.113674.1118.54.200&seriesUID=1.2.840.113674.1118.54.179.300&objectUID=1.2.840.113674.950809132635041.100
-    
+
     //awalnya list di table skrng gnti jadi session ke system A
     /* var url = 'https://orthanc.dicom.tw/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/';
     getJSON(url, null, null, function (data, last, dataShowed) {
@@ -88,55 +95,66 @@ function getInstances(studyID, seriesID) {
 }
 
 function drawtablelist(studyID, seriesID, first, data, dataType) {
-    if (first >= 0 && first < data.length) {
-        clearTable(dataType + " UID", "Preview");
-        var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
-        if (first + 10 > data.length) {
-            last = data.length;
-        } else {
-            last = first + 10;
-        }
-        setcontentNavbar(studyID, seriesID, first, data, dataType);
-        for (var j = first; j < last; j++) {
-            if (dataType == "Instance") {
-                drawInnertable(downloadFile, data[j], studyID, seriesID, first, last, data, dataType);
-            }
-            else if (dataType == "Study") {
-                var url = DICOMrootURL + '/dicom-web/studies/' + data[j]["0020000D"].Value[0] + '/series/';
-                getJSON(url, last, data, function (data2, last, dataShowed) {
-                    var url2 = DICOMrootURL + '/dicom-web/studies/' + data2[0]["0020000D"].Value[0] + '/series/' + data2[0]["0020000E"].Value[0] + '/instances';
-                    getJSON(url2, last, dataShowed, function (data3, last, dataShowed) {
-                        drawInnertable(getSeries, data3, studyID, seriesID, first, last, dataShowed, dataType);
-                    });
-                });
-            }
-            else if (dataType == "Series") {
-                var url = DICOMrootURL + '/dicom-web/studies/' + data[j]["0020000D"].Value[0] + '/series/' + data[j]["0020000E"].Value[0] + '/instances/';
-                getJSON(url, last, data, function (data2, last, dataShowed) {
-                    drawInnertable(getInstances, data2, studyID, seriesID, first, last, dataShowed, dataType);
-                });
-            }
-        }
+    clearTable(dataType + "Description", "Preview");
+    setcontentNavbar(studyID, seriesID, first, data, dataType);
+
+    var callback;
+    var dataAry;
+    switch (dataType) {
+        case 'Study':
+            callback = getSeries;
+            dataAry = data.entry;
+            break;
+        case 'Series':
+            callback = getInstances;
+            dataAry= data.series;
+            arr = data.identifier[0].value.split(':');
+            studyID = arr[2];
+            break;
+        default:
+            callback = null;
+            break;
     }
+
+    for (var j = first; j < dataAry.length; j++) {
+
+        drawInnertable(callback, dataAry[j], studyID, seriesID, first, data, dataType);
+        // if (dataType == "Instance") {
+        //     drawInnertable(downloadFile, data[j], studyID, seriesID, first, last, data, dataType);
+        // }
+        // else if (dataType == "Study") {
+        //     var url = DICOMrootURL + '/dicom-web/studies/' + data[j]["0020000D"].Value[0] + '/series/';
+        //     getJSON(url, last, data, function (data2, last, dataShowed) {
+        //         var url2 = DICOMrootURL + '/dicom-web/studies/' + data2[0]["0020000D"].Value[0] + '/series/' + data2[0]["0020000E"].Value[0] + '/instances';
+        //         getJSON(url2, last, dataShowed, function (data3, last, dataShowed) {
+        //             drawInnertable(getSeries, data3, studyID, seriesID, first, last, dataShowed, dataType);
+        //         });
+        //     });
+        // }
+        // else if (dataType == "Series") {
+        //     var url = DICOMrootURL + '/dicom-web/studies/' + data[j]["0020000D"].Value[0] + '/series/' + data[j]["0020000E"].Value[0] + '/instances/';
+        //     getJSON(url, last, data, function (data2, last, dataShowed) {
+        //         drawInnertable(getInstances, data2, studyID, seriesID, first, last, dataShowed, dataType);
+        //     });
+        // }
+    }
+
 }
 
 function populateInstancesList(studyID, seriesID, first, data) {
     if (first >= 0 && first < data.length) {
         if (first + 10 > data.length) {
             last = data.length;
-        }
-        else {
+        } else {
             last = first + 10;
         }
 
-        var dcmFiles=[];
+        var dcmFiles = [];
 
         for (var j = first; j < last; j++) {
-            //drawInnertable(downloadFile, data[j], studyID, seriesID, first, last, data, dataType);
             var instance = data[j];
             var list = document.getElementById("instancesList");
             var li = document.createElement('li');
-            //li.innerHTML=instance["00080018"].Value[0];
 
             var studyID = sessionStorage.getItem('studyUID');
             var seriesID = sessionStorage.getItem('seriesUID');
@@ -145,13 +163,13 @@ function populateInstancesList(studyID, seriesID, first, data) {
             img.height = 100;
             img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + instance["00080018"].Value[0];
             //li.onclick="setDCM("+ j+")";
-            li.value=j;
-            li.onclick = function() {
+            li.value = j;
+            li.onclick = function () {
                 var v = this.value;
                 //alert(dcmFiles[v]);
-            //    var url = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + dcmFiles[v];
-            //var url = DICOMrootURL + "/orthanc/dicom-web/studies/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.4.0/series/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.5.0/instances/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.3.0";
-            var url = DICOMrootURL + "/dicom-web/studies/"+ studyID +"/series/" + seriesID + "/instances/" + dcmFiles[v];
+                //    var url = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + dcmFiles[v];
+                //var url = DICOMrootURL + "/orthanc/dicom-web/studies/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.4.0/series/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.5.0/instances/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.3.0";
+                var url = DICOMrootURL + "/dicom-web/studies/" + studyID + "/series/" + seriesID + "/instances/" + dcmFiles[v];
 
                 sessionStorage.setItem('index', url);
                 dcmFile = url;
@@ -159,7 +177,7 @@ function populateInstancesList(studyID, seriesID, first, data) {
             };
 
             dcmFiles.push(instance["00080018"].Value[0]);
-            
+
             li.appendChild(img);
             list.appendChild(li);
         }
@@ -167,7 +185,7 @@ function populateInstancesList(studyID, seriesID, first, data) {
     }
 }
 
-function drawInnertable(callback, data, studyID, seriesID, first, last, dataShowed, dataType) {
+function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, dataType) {
     var datavalue;
     var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
     var row = table.insertRow(-1);
@@ -176,80 +194,68 @@ function drawInnertable(callback, data, studyID, seriesID, first, last, dataShow
     var cell3 = row.insertCell(2);
     var createClickHandler = function (row, fileType) {
         return function () {
-            var cell = row.getElementsByTagName("td")[1];
+            var cell = row.getElementsByTagName("td")[0].innerHTML;
             var id = cell.innerHTML;
-            if (dataType == "Study")
-                callback(data[0]["0020000D"].Value[0]);
-            else if (dataType == "Series")
-                callback(data[0]["0020000D"].Value[0], data[0]["0020000E"].Value[0]);
-            else if (dataType == "Instance")
-                callback(data["0020000D"].Value[0], data["0020000E"].Value[0], data["00080018"].Value[0], fileType);
+            if (dataType == "Study") {
+                drawtablelist(0, 0, 0, data.resource, "Series");
+            } else if (dataType == "Series"){
+                studyNum = studyID;
+                seriesNum = data.uid;
+                getInstances(studyNum, seriesNum);
+            }
+            else if (dataType == "Instance"){
+                studyNum = studyID;
+                seriesNum = data.uid;
+                getInstances(studyNum, seriesNum);
+            }
+                //callback(data["0020000D"].Value[0], data["0020000E"].Value[0], data["00080018"].Value[0], fileType);
         };
     };
 
+    var studyNum=0, seriesNum=0, instanceNum=0;
+
     var IDValue = '';
     if (dataType == "Study") {
-        datavalue = data[0];
-        IDValue = data[0]["0020000D"].Value[0];
+        resource = data.resource;
+        arr = resource.identifier[0].value.split(':');
+        studyNum = arr[2];
+        seriesNum = resource.series[0].uid;
+        instanceNum = resource.series[0].instance[0].uid;
         row.onclick = createClickHandler(row, null);
-    }
-    else if (dataType == "Series") {
-        datavalue = data[0];
-        IDValue = data[0]["0020000E"].Value[0];
+    } else if (dataType == "Series") {
+        studyNum = studyID;
+        seriesNum = data.uid;
+        instanceNum = data.instance[0].uid;
         row.onclick = createClickHandler(row, null);
-    }
-    else if (dataType == "Instance") {
-        datavalue = data;
-        IDValue = data["00080018"].Value[0];
-        var btn0 = document.createElement('input');
-        btn0.type = "button";
-        btn0.value = "Download JSON";
-        btn0.onclick = createClickHandler(row, "json");
-        var btn1 = document.createElement('input');
-        btn1.type = "button";
-        btn1.value = "Download Dicom";
-        btn1.onclick = createClickHandler(row, "download");
-        var btn2 = document.createElement('input');
-        btn2.type = "button";
-        btn2.value = "View Dicom";
-        btn2.onclick = createClickHandler(row, "view");
-
-        var cell4 = row.insertCell(3);
-        var cell5 = row.insertCell(4);
-        var cell6 = row.insertCell(5);
-        cell4.appendChild(btn0);
-        cell5.appendChild(btn1);
-        cell6.appendChild(btn2);
-
     }
 
     var img = document.createElement('img');
     img.width = 100;
     img.height = 100;
-    img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + datavalue["0020000D"].Value[0] + "&seriesUID=" + datavalue["0020000E"].Value[0] + "&objectUID=" + datavalue["00080018"].Value[0];
+    img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + studyNum + "&seriesUID=" + seriesNum + "&objectUID=" + instanceNum;
     img.alt = "Preview Not Available"
     var rows = table.getElementsByTagName("tr");
     cell1.innerHTML = first + rows.length;
     cell2.innerHTML = IDValue;
     cell3.appendChild(img);
 
-    var limit = (last % 10 == 0) ? 10 : (last % 10);
-    if (table.rows.length == limit + 1) {
-        var row2 = table.insertRow(-1);
-        var cell21 = row2.insertCell(0);
-        var cell22 = row2.insertCell(1);
+    // var limit = (last % 10 == 0) ? 10 : (last % 10);
+    // if (table.rows.length == limit + 1) {
+    //     var row2 = table.insertRow(-1);
+    //     var cell21 = row2.insertCell(0);
+    //     var cell22 = row2.insertCell(1);
 
-        var btn3 = document.createElement('input');
-        btn3.type = "button";
-        btn3.value = "next";
-        btn3.onclick = function () { drawtablelist(studyID, seriesID, (first + 10), dataShowed, dataType) };
-        var btn4 = document.createElement('input');
-        btn4.type = "button";
-        btn4.value = "prev";
-        btn4.onclick = function () { drawtablelist(studyID, seriesID, (first - 10), dataShowed, dataType) };
-        cell21.appendChild(btn4);
-        cell22.appendChild(btn3);
-    }
+    //     var btn3 = document.createElement('input');
+    //     btn3.type = "button";
+    //     btn3.value = "next";
+    //     btn3.onclick = function () { drawtablelist(studyID, seriesID, (first + 10), dataShowed, dataType) };
+    //     var btn4 = document.createElement('input');
+    //     btn4.type = "button";
+    //     btn4.value = "prev";
+    //     btn4.onclick = function () { drawtablelist(studyID, seriesID, (first - 10), dataShowed, dataType) };
+    //     cell21.appendChild(btn4);
+    //     cell22.appendChild(btn3);
+    // }
 }
 
 function setcontentNavbar(studyID, seriesID, first, data, dataType) {
@@ -290,11 +296,9 @@ function downloadFile(studyID, seriesID, instanceID, fileType) {
             //     cornerstone.displayImage(element, image);
             // });
         });
-    }
-    else if (fileType == "json") {
+    } else if (fileType == "json") {
         url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/?&SOPInstanceUID=' + instanceID;
-    }
-    else if (fileType == "view") {
+    } else if (fileType == "view") {
         var param = "https://orthanc.dicom.tw/dicom-web/studies/" + studyID + "/series/" + seriesID + "/instances/" + instanceID;
         //var param = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + instanceID;
         param = btoa(param);
