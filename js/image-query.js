@@ -62,7 +62,7 @@ function getPatientList() {
         var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
 
         for (var i = 0; i < data.length; i++) {
-            getJSON('https://startfhir.dicom.org.tw/fhir/' + data[i], null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+            getJSON(FHIRrootURL + '/TCUMI106.' + data[i], null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
                 var row = table.insertRow(-1);
                 var cell1 = row.insertCell(0);
