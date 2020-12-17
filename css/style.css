@@ -14,7 +14,7 @@
 
 	body
 	{
-		background: #202020 url(images/img01.jpg) repeat;
+		background-color: black;
 	}
 
 	body,input,textarea,select

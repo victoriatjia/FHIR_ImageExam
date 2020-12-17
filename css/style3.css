@@ -233,7 +233,7 @@
 		background-color: black;
 	}
 	
-	#myTable, th, tr, td{
+	#myTable th, #myTable tr, #myTable td{
 		border: 2px solid #999999;
 	}
 	
