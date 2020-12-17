@@ -4,19 +4,17 @@
     <title>Image Query</title>
     <style>
         .content-table {
-            border-collapse: collapse;
+            border: 3px solid rgb(0, 0, 0);
             margin: 25px 0;
-            font-size: 0.9em;
+            font-size: 1.5em;
             min-width: 400px;
             border-radius: 5px 5px 0 0;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
             background-color: #e3e3e3;
         }
 
         .content-table thead tr {
-            background-color: #009879;
-            color: #ffffff;
+            background-color: #d5d5d5;
             text-align: left;
             font-weight: bold;
         }
@@ -35,7 +33,7 @@
         }
 
         .content-table tbody tr:last-of-type {
-            border-bottom: 2px solid #009879;
+            border-bottom: 2px solid #d5d5d5;
         }
 
         .content-table tbody tr:hover {
@@ -102,7 +100,7 @@
         <button onclick="getPatientList()">Get Patient List</button>
         <button onclick="getImage()">Get Image</button>
         <div id="contentBar"></div>
-        <table id="tablelist" class="content-table">
+        <table id="tablelist" class='content-table'>
             <thead>
                 <tr>
                     <th>NO.</th>
@@ -113,7 +111,6 @@
             <tbody>
             </tbody>
         </table>
-        <!-- <div id="dicomImage" style="width:512px;height:512px;"></div> -->
 
     </div>
     <!-- /Main -->
