@@ -34,35 +34,14 @@ function clearTable(col1, col2) {
     document.getElementById("tablelist").getElementsByTagName("tbody")[0].innerHTML = "";
 }
 
-function getImage() {
-    //var url = "https://oauth.dicom.org.tw/orthanc/dicom-web/studies/1.3.6.1.4.1.14519.5.2.1.9999.103.2445110399502685110179049624130/series/1.3.6.1.4.1.14519.5.2.1.9999.103.2226892066207840840424092100052/instances/1.3.6.1.4.1.14519.5.2.1.9999.103.3006616233530892121079169089013"
-    var url = DICOMrootURL + "/dicom-web/studies/1.3.6.1.4.1.14519.5.2.1.5099.8010.256809878238026661650178294515/series/1.3.6.1.4.1.14519.5.2.1.5099.8010.293653169363509354643731389289/instances/1.3.6.1.4.1.14519.5.2.1.5099.8010.771104110219016637590309730419";
-    //var url = "http://startup.dicom.org.tw/wado?requestType=WADO&contentType=application/dicom&studyUID=1.2.276.0.7230010.3.1.2.367779275.15096.1597913898.329&seriesUID=1.2.276.0.7230010.3.1.3.367779275.15096.1597913898.330&objectUID=1.2.276.0.7230010.3.1.4.367779275.9892.1597913899.525";
-    //var url = "https://orthanc.dicom.tw/wado?requestType=WADO&studyUID=1.3.6.1.4.1.14519.5.2.1.5099.8010.256809878238026661650178294515&seriesUID=1.3.6.1.4.1.14519.5.2.1.5099.8010.293653169363509354643731389289&objectUID=1.3.6.1.4.1.14519.5.2.1.5099.8010.771104110219016637590309730419";
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-    xhr.responseType = 'arraybuffer';
-
-    xhr.onload = function () {
-        var status = xhr.status;
-        if (status == 200) {
-            var dicom = xhr.response;
-            var byteArray = new Uint8Array(dicom);
-            alert(byteArray);
-        }
-    };
-    xhr.send();
-}
-
 function getPatientList() {
-    clearTable("Patient UID", "Patient UID");
+    clearTable("Patient UID", "Patient Name");
     getJSON(DICOMrootURL + '/patients/', null, null, function (data, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
         var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
 
         for (var i = 0; i < data.length; i++) {
-            getJSON(FHIRrootURL + '/TCUMI106.' + data[i], null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+            getJSON(FHIRrootURL + '/Patient/' + data[i], null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
                 var row = table.insertRow(-1);
                 var cell1 = row.insertCell(0);
@@ -70,9 +49,9 @@ function getPatientList() {
                 var cell3 = row.insertCell(2);
 
                 var rows = table.getElementsByTagName("tr");
-                cell1.innerHTML = rows.length - 1;
-                cell2.innerHTML = data[rows.length - 2];
-                cell3.innerHTML = data2.MainDicomTags.PatientID;
+                cell1.innerHTML = rows.length;
+                cell2.innerHTML = data2.identifier[0].value;
+                cell3.innerHTML = data2.name[0].text;
             });
         }
     });
@@ -250,7 +229,7 @@ function drawInnertable(callback, data, studyID, seriesID, first, last, dataShow
     img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + datavalue["0020000D"].Value[0] + "&seriesUID=" + datavalue["0020000E"].Value[0] + "&objectUID=" + datavalue["00080018"].Value[0];
     img.alt = "Preview Not Available"
     var rows = table.getElementsByTagName("tr");
-    cell1.innerHTML = first + rows.length - 1;
+    cell1.innerHTML = first + rows.length;
     cell2.innerHTML = IDValue;
     cell3.appendChild(img);
 
