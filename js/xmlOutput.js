@@ -1,5 +1,6 @@
 var obsID = '';
 var params = {};
+var patientStudy_ID, ImagingStudy_ID;
 
 function formInputsToXML(type, URL, uid, svgBase64, vw, vh, wc, ww, pixelData, dcmFile, annotationType) {
 	var baseURL = "https://www.dicom.org.tw/";
@@ -45,7 +46,7 @@ function mammoXML(formID, formCode) {
 	var thisform = document.getElementById(formID);
 	var elements = thisform.elements;
 	var p = new Array(15), count = 1;
-	p[0] = "1168613";
+	p[0] = patientStudy_ID;
 	if (formID == 'QuestionCheck') {
 		var que = ["RetractionSkin_", "ThickeningSkin_", "DilatedLactiferous_", "EnlargedAxillary_"];
 		for (i = 0; i < que.length; i++) {
@@ -159,7 +160,8 @@ function mammoXML(formID, formCode) {
 		}
 		ArrayFID = ArrayFID.split(",");
 
-		DiagnosticReport.subject.reference = "Patient/1168613";
+		DiagnosticReport.subject.reference = patientStudy_ID;
+		DiagnosticReport.imagingStudy.reference = "ImagingStudy/" + ImagingStudy_ID;
 		for (var i = 0; i < ArrayFID.length; i++) {
 			var ref = {};
 			var x = ArrayFID[i]

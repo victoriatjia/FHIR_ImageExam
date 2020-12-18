@@ -373,6 +373,9 @@ var DiagnosticReport = {
     ],
     "issued": "",
     "result": [],
+    "imagingStudy": {
+        "reference": ""
+    },
     "conclusionCode": [{
         "coding": []
     }]

@@ -123,7 +123,7 @@ function setTablePatient(patientObservation, firstrowNum, type, tableTarget, fin
                 row2.appendChild(cell);
 
                 cell = document.createElement("td");
-                var divStr = "<a target='_blank' href='" + singlePatient.component[i].code.coding[j].system + "'>" + singlePatient.component[i].code.coding[j].code;
+                var divStr = "<a target='_blank' href='" + singlePatient.component[i].code.coding[j].system + "'>" + singlePatient.component[i].code.coding[j].display;
                 cell.innerHTML = divStr;
                 row2.appendChild(cell);
 
