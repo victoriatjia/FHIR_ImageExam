@@ -91,42 +91,54 @@ function mammoXML(formID, formCode) {
 		val = paramsStr[i].split("=");
 		params[val[0]] = val[1];
 	}
-
+	var obsTarget_type;
 	if (formID == 'mass') {
-		massObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
-		massObservation.valueCodeableConcept.coding[0].code = p[1];
-		massObservation.component[0].code.coding[0].code = p[3];
-		massObservation.component[0].code.coding[1].code = p[5];
-		massObservation.component[1].code.coding[0].code = p[7];
-		massObservation.component[2].code.coding[0].code = p[9];
-		massObservation.component[3].code.coding[0].code = p[11];
-		massObservation.component[4].code.coding[0].code = p[13];
-		output = Object.assign(Observation, massObservation);
+		obsTarget_type = massObservation;
 	}
+
 	if (formID == 'calcifications') {
-		calcificationObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
-		calcificationObservation.valueCodeableConcept.coding[0].code = p[1];
-		calcificationObservation.component[0].code.coding[0].code = p[3];
-		calcificationObservation.component[0].code.coding[1].code = p[5];
-		calcificationObservation.component[1].code.coding[0].code = p[7];
-		calcificationObservation.component[2].code.coding[0].code = p[9];
-		output = Object.assign(Observation, calcificationObservation);
+		// calcificationObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
+		// calcificationObservation.valueCodeableConcept.coding[0].code = p[1];
+		// calcificationObservation.component[0].code.coding[0].code = p[3];
+		// calcificationObservation.component[0].code.coding[1].code = p[5];
+		// calcificationObservation.component[1].code.coding[0].code = p[7];
+		// calcificationObservation.component[2].code.coding[0].code = p[9];
+		// output = Object.assign(Observation, calcificationObservation);
+		obsTarget_type = calcificationObservation;
 	}
 	if (formID == 'asymmetry') {
-		asymetryObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
-		asymetryObservation.valueCodeableConcept.coding[0].code = p[1];
-		asymetryObservation.component[0].code.coding[0].code = p[3];
-		asymetryObservation.component[0].code.coding[1].code = p[5];
-		output = Object.assign(Observation, asymetryObservation);
+		// asymetryObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
+		// asymetryObservation.valueCodeableConcept.coding[0].code = p[1];
+		// asymetryObservation.component[0].code.coding[0].code = p[3];
+		// asymetryObservation.component[0].code.coding[1].code = p[5];
+		// output = Object.assign(Observation, asymetryObservation);
+		obsTarget_type = asymetryObservation;
 	}
 	if (formID == 'architecturalDistortion') {
-		architecturalDistortionObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
-		architecturalDistortionObservation.valueCodeableConcept.coding[0].code = p[1];
-		architecturalDistortionObservation.component[0].code.coding[0].code = p[3];
-		architecturalDistortionObservation.component[0].code.coding[1].code = p[5];
-		output = Object.assign(Observation, architecturalDistortionObservation);
+		// architecturalDistortionObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
+		// architecturalDistortionObservation.valueCodeableConcept.coding[0].code = p[1];
+		// architecturalDistortionObservation.component[0].code.coding[0].code = p[3];
+		// architecturalDistortionObservation.component[0].code.coding[1].code = p[5];
+		// output = Object.assign(Observation, architecturalDistortionObservation);
+		obsTarget_type = architecturalDistortionObservation;
 	}
-	if (formID == 'QuestionCheck') {
+	if (formID != 'QuestionCheck') {
+		obsTarget_type.derivedFrom[0].reference = "Observation/" + params["annotationID"];
+		obsTarget_type.valueCodeableConcept.coding[0].code = p[1];
+		obsTarget_type.valueCodeableConcept.coding[0].display = p[2];
+		obsTarget_type.component[0].code.coding[0].code = p[3];
+		obsTarget_type.component[0].code.coding[0].display = p[4];
+		obsTarget_type.component[0].code.coding[1].code = p[5];
+		obsTarget_type.component[0].code.coding[1].display = p[6];
+
+		for (var i = 1; i < obsTarget_type.component.length; i++) {
+			var P_index = i + 6 + (i - 1);
+			obsTarget_type.component[i].code.coding[0].code = p[P_index];
+			obsTarget_type.component[i].code.coding[0].display = p[P_index + 1];
+		}
+		output = Object.assign(Observation, obsTarget_type);
+	}
+	else if (formID == 'QuestionCheck') {
 		var arrID = [], arrValue = [];
 		arrID.push(document.querySelector('input[name="Category"]:checked').id);
 		arrValue.push(document.querySelector('input[name="Category"]:checked').value);
@@ -287,7 +299,7 @@ function postData(jsonString, type, formID) {
 			//alert(this.responseText);
 			// var str = ret.split('<id value="');
 			// var str2 = str[1].split('"/');
-			obsID= ret.id;
+			obsID = ret.id;
 			alert("FHIR Observation ID: " + ret.id);
 
 			if (formID == 'mass') {
