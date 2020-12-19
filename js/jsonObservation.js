@@ -380,11 +380,11 @@ var DiagnosticReport = {
         "coding": []
     }]
 }
-var fhir = {
-    //"url": "http://203.64.84.218t:8045/fhir/"
-    "url": "http://hapi.fhir.org/baseR4/"
-}
-var result = {
-    "url": "http://hapi.fhir.org/baseDstu3/"
-}
+// var fhir = {
+//     //"url": "http://203.64.84.218t:8045/fhir/"
+//     "url": "http://hapi.fhir.org/baseR4/"
+// }
+// var result = {
+//     "url": "http://hapi.fhir.org/baseDstu3/"
+// }
 

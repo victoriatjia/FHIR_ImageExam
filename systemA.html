@@ -95,22 +95,26 @@
 		<div class="column" style="background-color:#202020; width: 29.5%;">
 			<ul id="instancesList" style="position: absolute; right:10px;"></ul>
 		</div>
-	</div>	
+	</div>
 
 	<table id="myTable" style="color:white">
-		<tr style="background-color:white; font-weight:bold; color: black;" >
-			<th>Type Annotation</th>
-			<th>SVG Annotation</th>
-			<th>Post Annotation</th>
-			<th>Finding Type</th>
-			<th>Finding ID</th>
-		</tr>
+		<thead>
+			<tr style="background-color:white; font-weight:bold; color: black;">
+				<th>Type Annotation</th>
+				<th>SVG Annotation</th>
+				<th>Post Annotation</th>
+				<th>Finding Type</th>
+				<th>Finding ID</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
 	</table>
 
 	<div id="myModal" class="modal">
 		<div id="modal-content" class="modal-content"></div>
 	</div>
-		
+
 	<script>
 		//canvas
 		var canvas = document.getElementById("myCanvas"),
@@ -121,11 +125,11 @@
 
 		//windowLW
 		var windowCenter, windowWidth, maxPixelValue, minPixelValue;
-		var adjusting=false, panning = false;
+		var adjusting = false, panning = false;
 		//end windowLW
 
 		//image source file path
-		var dcmFile; 
+		var dcmFile;
 		var dcmFileArray = new Array(9);
 		dcmFileArray = ["https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/MR2S1IM9.dcm",
 			"https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/mammo1.dcm",
@@ -134,29 +138,29 @@
 			"https://orthanc.dicom.tw/wado/?requestType=WADO&studyUID=1.3.6.1.4.1.14519.5.2.1.9999.103.2445110399502685110179049624125&seriesUID=1.3.6.1.4.1.14519.5.2.1.9999.103.2226892066207840840424092100047&objectUID=1.2.276.0.7230010.3.1.4.2437395334.5140.1597491138.380&contentType=application/dicom"
 		];
 
-			//session
-			var studyID = sessionStorage.getItem('studyUID');
-			var seriesID = sessionStorage.getItem('seriesUID');
-			var dicomURL = sessionStorage.getItem('index');
-			var query = location.search.substring(1);
-			if (query != "") {	//get FHIR Observation id from GET Method
-				var param = query.split(/=/);
-				getFHIR(param[1]);
-			} 
-			else {
-				if(studyID == null && seriesID == null){
+		//session
+		var studyID = sessionStorage.getItem('studyUID');
+		var seriesID = sessionStorage.getItem('seriesUID');
+		var dicomURL = sessionStorage.getItem('index');
+		var query = location.search.substring(1);
+		if (query != "") {	//get FHIR Observation id from GET Method
+			var param = query.split(/=/);
+			getFHIR(param[1]);
+		}
+		else {
+			if (studyID == null && seriesID == null) {
+				initialization();
+				dcmFile = dcmFileArray[dicomURL];
+				getDCM("A");
+			} else {
+				var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/';
+				getJSON(url, null, null, function (data, last, dataShowed) {
+					dcmFiles = populateInstancesList(studyID, seriesID, 0, data);
 					initialization();
-					dcmFile = dcmFileArray[dicomURL];
-					getDCM("A");
-				} else {
-					var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/';
-					getJSON(url, null, null, function (data, last, dataShowed) {
-						dcmFiles = populateInstancesList(studyID, seriesID, 0, data);
-						initialization();
-					});
-				}
+				});
 			}
-			// end of session
+		}
+		// end of session
 		//end image source file path
 
 		//Display image to canvas
@@ -187,7 +191,7 @@
 			paintEllipse = false,
 			typeText = false;
 		var x1, y1, x2, y2;
-		var allAnnotationSVG="";
+		var allAnnotationSVG = "";
 		var line, rect, ellipse, polygon, text;
 		var svgLine, svgRect, svgEllipse, svgText;
 		var svgColor = "black",
@@ -205,7 +209,7 @@
 			for (var i = 0; i < 10; i++) {
 				svgLine[i] = new Array(4);
 			}
-			
+
 			svgRect = new Array(10);				//rect
 			for (var i = 0; i < 10; i++) {
 				svgRect[i] = new Array(6);
@@ -270,15 +274,15 @@
 			storedPixelValueToCanvas(ctx, scaledImage.width, scaledImage.height, PanX, PanY);
 			redrawAnnotation();
 		}
-		
+
 		//zoom in and out slider
 		function scrollZoom(e) {
 			if (e.wheelDelta < 0 || e.detail > 0) {
 				var temp = scaleRatio - 0.1;
 				if (temp < 0.1) scaleRatio = 0.1;
 				else scaleRatio = temp;
-			} 
-			else	scaleRatio = scaleRatio + 0.1;
+			}
+			else scaleRatio = scaleRatio + 0.1;
 
 			zoom(scaleRatio);
 			return false; // Prevent page from scrolling
@@ -288,9 +292,9 @@
 			if (scale == 0) scale = fitCanvasRatio;
 
 			scaleRatio = scale; //scaledImage.width/ sourceImage.width; 
-			scaledImage.width = Math.round(sourceImage.width * scale); 
-			scaledImage.height = Math.round(sourceImage.height * scale); 
-			PanX += (scaledImage.prevWidth - scaledImage.width) * (((canvasWidth / 2) - PanX) / scaledImage.prevWidth); 
+			scaledImage.width = Math.round(sourceImage.width * scale);
+			scaledImage.height = Math.round(sourceImage.height * scale);
+			PanX += (scaledImage.prevWidth - scaledImage.width) * (((canvasWidth / 2) - PanX) / scaledImage.prevWidth);
 			PanY += (scaledImage.prevHeight - scaledImage.height) * (((canvasHeight / 2) - PanY) / scaledImage.prevHeight);
 			scaledImage.prevWidth = scaledImage.width;
 			scaledImage.prevHeight = scaledImage.height;
@@ -298,7 +302,7 @@
 			document.getElementById("ratioInfo").innerHTML = "Ratio: " + Math.round(scale * 100) / 100;
 		}
 		//END zoom in and out slider
-		
+
 		//Panning
 		var xx, yy;
 		function Pan() {
@@ -346,7 +350,7 @@
 				x1 = e.clientX;
 				y1 = e.clientY;
 			}
-			
+
 			drawCanvas.onmousemove = function (e) {
 				if (adjusting == true) {
 					var x = e.clientX;
@@ -359,7 +363,7 @@
 					redrawAnnotation();
 				}
 			}
-			
+
 			drawCanvas.onmouseup = function (e) {
 				if (adjusting == true) {
 					adjusting = false;
@@ -378,7 +382,7 @@
 			setPixel();
 		}
 		//End Window level adjustment
-		
+
 		// < !--Annotation -->
 		function strokeColor(color) {
 			svgColor = color;
@@ -386,13 +390,13 @@
 			drawCtx.strokeStyle = color;
 			ctx.fillStyle = color;
 		}
-		
+
 		function strokeWidth(width) {
 			svgStrokeWidth = width;
 			ctx.lineWidth = width;
 			drawCtx.lineWidth = width;
 		}
-		
+
 		function Text() {
 			drawCanvas.onmousedown = function (e) {
 				typeText = true;
@@ -486,7 +490,7 @@
 				x1 = e.pageX - document.getElementById("allcanvas").offsetLeft; //e=mouse cursor, this=canvas original x,
 				y1 = e.pageY - document.getElementById("allcanvas").offsetTop;
 			}
-			
+
 			drawCanvas.onmousemove = function (e) {
 				drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
 				var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
@@ -495,7 +499,7 @@
 				if (paintRect)
 					drawRect(drawCtx, x1, y1, x2, y2, svgColor, svgStrokeWidth);
 			}
-			
+
 			drawCanvas.onmouseup = function (e) {
 				paintRect = false;
 				var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
@@ -560,7 +564,7 @@
 				showSVG();
 			}
 		}
-		
+
 		function drawEllipse(ctxType, x1, y1, rx, ry, color, strokewidth) {
 			ctxType.lineWidth = strokewidth;
 			ctxType.strokeStyle = color;
@@ -569,7 +573,7 @@
 				.PI); //x, y, major radiusX, minor radiusY, rotation, startAngle, endAngle
 			ctxType.stroke();
 		}
-		
+
 		function redrawAnnotation() {
 			for (var i = 0; i < text; i++) {
 				var fontType = svgText[i][4];
@@ -590,7 +594,7 @@
 			}
 			for (var i = 0; i < ellipse; i++) {
 				drawEllipse(ctx, (svgEllipse[i][0] + (PanX / scaleRatio)) * scaleRatio, (svgEllipse[i][1] + (PanY /
-						scaleRatio)) * scaleRatio, svgEllipse[i][2] * scaleRatio, svgEllipse[i][3] * scaleRatio,
+					scaleRatio)) * scaleRatio, svgEllipse[i][2] * scaleRatio, svgEllipse[i][3] * scaleRatio,
 					svgEllipse[i][4], svgEllipse[i][5]);
 			}
 		}
@@ -646,22 +650,22 @@
 
 				tablelist(svghead + svgstr + '</svg>', table, "ellipse");
 			}
-			allAnnotationSVG+= svgstr;
+			allAnnotationSVG += svgstr;
 			lasttext = text;
 			lastline = line;
 			lastrect = rect;
 			lastellipse = ellipse;
 		}
-		
-		function educationalPlatform(){
+
+		function educationalPlatform() {
 			var svghead = '<svg width="' + sourceImage.width + '" height="' + scaledImage.height + '">\n';
-			var svg= window.btoa(svghead + allAnnotationSVG + '</svg>');
+			var svg = window.btoa(svghead + allAnnotationSVG + '</svg>');
 			var xmlStr = formInputsToXML(modalityType, document.URL, UID.trim(), svg, sourceImage.width, sourceImage.height, windowCenter, windowWidth, pixelDataOffset, dcmFile, "");
 			sessionStorage.setItem("studentAnswer", obsID);
 			window.open("compareAnswer.html", "_blank");
 		}
-		
-		var arr = ["textAnnotation"]; 
+
+		var arr = ["textAnnotation"];
 		function showField(idVal) {
 			if (document.getElementById(idVal).style.display == "none")
 				document.getElementById(idVal).style.display = "block";
@@ -670,8 +674,8 @@
 
 			for (var i = 0; i < arr.length; i++) {
 				if (idVal != arr[i])
-					document.getElementById(arr[i]).style.display="none"; 
-			} 
+					document.getElementById(arr[i]).style.display = "none";
+			}
 		}
 
 		function showRecord() {
@@ -686,10 +690,11 @@
 		function closeModal() {
 			modal.style.display = "none";
 		}
-		
+
 		function tablelist(svgstr1, table, annotationType) {
+			var table = table.getElementsByTagName("tbody")[0]
 			var btn = document.createElement('input');
-			btn.style.backgroundColor="#d9d9d9";
+			btn.style.backgroundColor = "#d9d9d9";
 			btn.type = "button";
 			btn.id = "postAnnotationBtn" + table.rows.length;
 			btn.value = "Post Annotation";
@@ -699,7 +704,7 @@
 			};
 
 			var txtbox = document.createElement('input');
-			txtbox.style.backgroundColor="white";
+			txtbox.style.backgroundColor = "white";
 			txtbox.type = "text";
 			txtbox.id = "PositionTB" + table.rows.length;
 			txtbox.disabled = 'false';
@@ -743,7 +748,7 @@
 
 		function postFHIR(rowslength) {
 			var annotationType = document.getElementById("myTable").rows[rowslength].cells[0].innerHTML;
-			document.getElementById("postAnnotationBtn" + rowslength).style.color="black";
+			document.getElementById("postAnnotationBtn" + rowslength).style.color = "black";
 			document.getElementById("postAnnotationBtn" + rowslength).value = "posted";
 			document.getElementById("postAnnotationBtn" + rowslength).disabled = true;
 			var svg = document.getElementById("PositionTB" + rowslength).value;
@@ -755,11 +760,11 @@
 		function OnSelectedIndexChange(drpdwn, table, rowslength) {
 			var url = "";
 			var selectedText = drpdwn.options[drpdwn.selectedIndex].innerHTML;
-			if (selectedText == "Mammo Mass") 
+			if (selectedText == "Mammo Mass")
 				url = "findingReport/MammoMass.html";
-			else if (selectedText == "Mammo Calcification") 
+			else if (selectedText == "Mammo Calcification")
 				url = "findingReport/MammoCalcification.html";
-			else if (selectedText == "Mammo Architectural Distortion") 
+			else if (selectedText == "Mammo Architectural Distortion")
 				url = "findingReport/MammoArchitecturalDistortion.html";
 			else if (selectedText == "Mammo Focal Asymetry")
 				url = "findingReport/MammoFocalAsymetry.html";
@@ -772,14 +777,14 @@
 			}
 			if (annotationType == "text")
 				id = ctext[id];
-			else if (annotationType == "line") 
+			else if (annotationType == "line")
 				id = cline[id];
-			else if (annotationType == "rectangle") 
+			else if (annotationType == "rectangle")
 				id = crect[id];
-			else if (annotationType == "ellipse") 
+			else if (annotationType == "ellipse")
 				id = cellipse[id];
-				
-			window.open(url + '?annotationID=' + id + '&rowNum=' + rowslength + '&findingType=' + selectedText, '_blank',
+
+			window.open(url + '?annotationID=' + id + '&rowNum=' + rowslength + '&findingType=' + selectedText + '&imagingStudyID=' + ImagingStudy_ID + '&patientStudyID=' + patientStudy_ID, '_blank',
 				'location=yes,height=900,width=900,scrollbars=yes,status=yes,top=0,left=500');
 		}
 
@@ -805,8 +810,9 @@
 				}
 			}
 			sessionStorage.setItem('findingID', findingID);
-			window.open("findingReport/MammoQuestion.html", '_blank', 'location=yes,height=900,width=900,scrollbars=yes,status=yes,top=0,left=500');
+			window.open("findingReport/MammoQuestion.html" + '?imagingStudyID=' + ImagingStudy_ID + '&patientStudyID=' + patientStudy_ID, '_blank', 'location=yes,height=900,width=900,scrollbars=yes,status=yes,top=0,left=500');
 		}
 	</script>
 </body>
+
 </html>

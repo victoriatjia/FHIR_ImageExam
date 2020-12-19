@@ -1,4 +1,5 @@
 var obsID = '';
+var ArrayFID;
 var params = {};
 var patientStudy_ID, ImagingStudy_ID;
 
@@ -42,6 +43,10 @@ function formInputsToXML(type, URL, uid, svgBase64, vw, vh, wc, ww, pixelData, d
 	postData(output, "Observation", annotationType);
 }
 
+function getsession() {
+	ArrayFID = sessionStorage.getItem('findingID');
+}
+
 function mammoXML(formID, formCode) {
 	var thisform = document.getElementById(formID);
 	var elements = thisform.elements;
@@ -78,6 +83,7 @@ function mammoXML(formID, formCode) {
 			}
 		}
 	}
+	getParams();
 	var output;
 	Observation.identifier[0].system = document.URL;
 	Observation.identifier[0].value = formID;
@@ -85,18 +91,10 @@ function mammoXML(formID, formCode) {
 	Observation.status = "final";
 	Observation.code.coding[0].system = "http://hl7.org/fhir/STU3/valueset-observation-codes.html";
 	Observation.code.coding[0].Display = "Physical findings of Breasts Narrative";
-	Observation.subject.reference = "Patient/" + p[0];
-	var query = location.search.substring(1);
-	var paramsStr = query.split("&");
-	for (i = 0; i < paramsStr.length; i++) {
-		val = paramsStr[i].split("=");
-		params[val[0]] = val[1];
-	}
-	var obsTarget_type;
-	if (formID == 'mass') {
-		obsTarget_type = massObservation;
-	}
+	Observation.subject.reference = "Patient/" + params["patientStudyID"];
 
+	var obsTarget_type;
+	if (formID == 'mass') obsTarget_type = massObservation;
 	if (formID == 'calcifications') {
 		// calcificationObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
 		// calcificationObservation.valueCodeableConcept.coding[0].code = p[1];
@@ -143,6 +141,7 @@ function mammoXML(formID, formCode) {
 		var arrID = [], arrValue = [];
 		arrID.push(document.querySelector('input[name="Category"]:checked').id);
 		arrValue.push(document.querySelector('input[name="Category"]:checked').value);
+
 		if (document.querySelector('input[name="Category"]:checked').id == "Category4") {
 			arrID.push(document.querySelector('input[name="Category4"]:checked').id);
 			arrValue.push(document.querySelector('input[name="Category4"]:checked').value);
@@ -158,10 +157,11 @@ function mammoXML(formID, formCode) {
 				}
 			}
 		}
-		ArrayFID = ArrayFID.split(",");
+		//var typearr = typeof (ArrayFID);
+		ArrayFID = (typeof (ArrayFID) == "string") ? ArrayFID.split(",") : ArrayFID;
 
-		DiagnosticReport.subject.reference = patientStudy_ID;
-		DiagnosticReport.imagingStudy.reference = "ImagingStudy/" + ImagingStudy_ID;
+		DiagnosticReport.subject.reference = "Patient/" + params["patientStudyID"];
+		DiagnosticReport.imagingStudy.reference = "ImagingStudy/" + params["imagingStudyID"];
 		for (var i = 0; i < ArrayFID.length; i++) {
 			var ref = {};
 			var x = ArrayFID[i]
@@ -184,90 +184,15 @@ function mammoXML(formID, formCode) {
 	}
 	if (formID != 'QuestionCheck') postData(output, "Observation", formID);
 }
-
-function diagnosisXML() {
-	var i, j, p1, p2, p3, p4, p5, p6, p7, p8, p9 = "", len, temp, str = '', str2 = '', output = '';
-	p1 = document.getElementById("pId").value;
-	p2 = document.getElementById("pName").value;
-	p3 = document.getElementById("birthDate").value;
-	p4 = "Patient/112441"
-	p5 = document.getElementById("examineDate").value;
-	p6 = "Practitioner/AJN0050605011970N1"
-	p7 = document.getElementById("radiologistName").value;
-	temp = document.getElementsByName("category");
-	for (i = 0; i < temp.length; i++) {
-		if (temp[i].checked == true) {
-			p8 = temp[i].value;;
-			if (i == 2) {
-				temp = document.getElementsByName("suspicion");
-				for (j = 0; j < temp.length; j++) {
-					if (temp[j].checked == true) {
-						p8 += temp[j].value + '"/></DiagnosticReport>';
-					}
-				}
-			}
-			if (i != 2) {
-				p8 += '"/></DiagnosticReport>'
-			}
-			break;
-		}
+function getParams() {
+	var query = location.search.substring(1);
+	var paramsStr = query.split("&");
+	for (i = 0; i < paramsStr.length; i++) {
+		val = paramsStr[i].split("=");
+		params[val[0]] = val[1];
 	}
 
-	if (document.getElementById("Q1").checked == true) {
-		if (document.getElementById("Q1_rt").checked == true)
-			p9 = document.getElementById("Q1_rt").value;
-		if (document.getElementById("Q1_lt").checked == true)
-			p9 += document.getElementById("Q1_lt").value;
-		str += '<result><identifier><system value="http://www.radlex.org"/><value value="RID28509_' + p9 + '"/></identifier></result>';
-	}
-	if (document.getElementById("Q2").checked == true) {
-		if (document.getElementById("Q2_rt").checked == true)
-			p9 = document.getElementById("Q1_rt").value;
-		if (document.getElementById("Q2_lt").checked == true)
-			p9 += document.getElementById("Q1_lt").value;
-		str += '<result><identifier><system value="http://www.radlex.org"/><value value="RID1357_' + p9 + '"/></identifier></result>';
-	}
-	if (document.getElementById("Q3").checked == true) {
-		if (document.getElementById("Q3_rt").checked == true)
-			p9 = document.getElementById("Q1_rt").value;
-		if (document.getElementById("Q3_lt").checked == true)
-			p9 += document.getElementById("Q1_lt").value;
-		str += '<result><identifier><system value="http://www.radlex.org"/><value value="RID49972_' + p9 + '"/></identifier></result>';
-	}
-	if (document.getElementById("Q4").checked == true) {
-		if (document.getElementById("Q4_rt").checked == true)
-			p9 = document.getElementById("Q1_rt").value;
-		if (document.getElementById("Q4_lt").checked == true)
-			p9 += document.getElementById("Q1_lt").value;
-		str += '<result><identifier><system value="http://www.radlex.org"/><value value="RID34317_' + p9 + '"/></identifier></result>';
-	}
-	if (document.getElementById("Q5").checked == true) {
-		str += '<result><identifier><system value="http://www.snomed.org"/><value value="74964007_' + document.getElementById("Q5_answer").value + '"/></identifier></result>';
-	}
-
-	for (i = 0; i < cmass[0]; i++) {
-		str2 += '<result><reference value="Observation/' + cmass[i + 1] + '"/><identifier><system value="http://www.radlex.org"/><value value="RID39055"/></identifier></result>';
-	}
-	for (i = 0; i < ccal[0]; i++) {
-		str2 += '<result><reference value="Observation/' + ccal[i + 1] + '"/><identifier><system value="http://www.radlex.org"/><value value="RID34642"/></identifier></result>';
-	}
-	for (i = 0; i < casym[0]; i++) {
-		str2 += '<result><reference value="Observation/' + casym[i + 1] + '"/><identifier><system value="http://www.radlex.org"/><value value="RID34265"/></identifier></result>';
-	}
-	for (i = 0; i < cdistort[0]; i++) {
-		str2 += '<result><reference value="Observation/' + cdistort[i + 1] + '"/><identifier><system value="http://www.radlex.org"/><value value="RID34261"/></identifier></result>';
-	}
-
-	output += '<?xml version="1.0" encoding="UTF-8"?><DiagnosticReport xmlns="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://hl7.org/fhir fhir-all-xsd/diagnosticreport.xsd">';
-	output += '<Patient><id value="' + p1 + '"/><text><status value="generated"/><div xmlns="http://www.w3.org/1999/xhtml"><h1>病患資料顯示</h1></div></text><active value="true"/><name><use value="usual"/><text value="' + p2 + '"/></name><gender value="female"/><birthDate value="' + p3 + '"/></Patient>';
-	output += '<status value="final"/><code><coding><system value="http://loinc.org"/><code value="24606-6"/></coding><text value="MG Breast Screening"/></code><subject><reference value="' + p4 + '"/></subject><effectiveDateTime value="' + p5 + '"/>';
-	output += '<performer><role><coding><system value="http://hl7.org/fhir/ValueSet/performer-role"/><code value="41904004"/><display value="Medical X-ray technician"/></coding></role><actor><reference value="' + p6 + '"/><display value="' + p7 + '"/></actor></performer>';
-	output += str2 + str + '<conclusion value="' + p8;
-
-	//alert(output);
-	postData(output, "DiagnosticReport", "");
 }
-
 var cmass = new Array(15), ccal = new Array(15), casym = new Array(15), cdistort = new Array(15), cQuesCheck = new Array(15);
 var cline = [], crect = [], cellipse = [];
 cmass[0] = 0; ccal[0] = 0; casym[0] = 0; cdistort[0] = 0; cQuesCheck[0] = 0;

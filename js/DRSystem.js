@@ -195,23 +195,22 @@ function displayIdentifier(table, patientObservation, firstrowNum) {
     cell0.innerHTML = (firstrowNum + table.rows.length);
     row.appendChild(cell0);
 
-    var cell = document.createElement("td");
-    cell.innerHTML = patientObservation.id;
-    row.appendChild(cell);
-
-    cell = document.createElement("td");
-    cell.innerHTML = patientObservation.subject.reference;
-    row.appendChild(cell);
-
-    cell = document.createElement("td");
-    cell.innerHTML = patientObservation.encounter.reference;
-    row.appendChild(cell);
-
+    cell0 = document.createElement("td");
+    cell0.innerHTML = patientObservation.id;
+    row.appendChild(cell0);
+    var gvalue = [patientObservation.subject.reference, patientObservation.encounter.reference];
+    for (var i = 0; i < gvalue.length; i++) {
+        var cell = document.createElement("td");
+        var strValue = gvalue[i].split("/");
+        cell.innerHTML = strValue[1];
+        row.appendChild(cell);
+    }
     cell = document.createElement("td");
     cell.innerHTML = "";
     for (var i = 0; i < patientObservation.resultsInterpreter.length; i++) {
         if (i != 0) cell1.innerHTML += ',<br>';
-        cell.innerHTML += patientObservation.resultsInterpreter[i].reference;
+        var practstr = patientObservation.resultsInterpreter[i].reference.split("/");
+        cell.innerHTML += practstr[1];
     }
     row.appendChild(cell);
 
@@ -256,11 +255,16 @@ var createClickHandler2 = function (row, firstrowNum) {
         var PractitionerValue = "";
         for (var i = 0; i < singlePatient.resultsInterpreter.length; i++) {
             if (i != 0) PractitionerValue += ',<br>';
-            PractitionerValue += singlePatient.resultsInterpreter[i].reference;
+            var practstr = singlePatient.resultsInterpreter[i].reference.split("/");
+            PractitionerValue += practstr[1];
+        }
+        for (var i = 1; i < gvalue.length; i++) {
+            var strValue = gvalue[i].split("/");
+            gvalue[i] = strValue[1];
         }
         gvalue.push(PractitionerValue);
         gvalue.push(singlePatient.meta.lastUpdated);
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < gname.length; i++) {
             row2 = document.createElement("tr");
             cell = document.createElement("td");
             row2.className = "noBorder";
@@ -272,6 +276,26 @@ var createClickHandler2 = function (row, firstrowNum) {
             row2.appendChild(cell);
             table.appendChild(row2);
         }
+        row2 = document.createElement("tr");
+        cell = document.createElement("th");
+        cell.innerHTML = "Imaging Study <h style='font-size:16px'>(Click below id to view the imaging study)</h>";
+        cell.colSpan = "3";
+        cell.style.fontSize = "20px";
+        row2.appendChild(cell);
+        table.appendChild(row2);
+
+        //var ImagingStudyValue = "";
+        for (var i = 0; i < singlePatient.imagingStudy.length; i++) {
+            row2 = document.createElement("tr");
+            cell = document.createElement("td");
+            row2.className = "noBorder";
+            cell.colSpan = "3";
+            var ImagingStudyValue = singlePatient.imagingStudy[i].reference.split("/");
+            cell.innerHTML = String.fromCharCode(97 + i) + ". <u>" + ImagingStudyValue[1] + "</u>";
+            row2.appendChild(cell);
+            row2.onclick = createClickImagingStudy(row);
+            table.appendChild(row2);
+        }
 
         row2 = document.createElement("tr");
         cell = document.createElement("th");
@@ -281,7 +305,7 @@ var createClickHandler2 = function (row, firstrowNum) {
         row2.appendChild(cell);
         table.appendChild(row2);
 
-        var ResultValue = "";
+        //        var ResultValue = "";
         for (var i = 0; i < singlePatient.conclusionCode[0].coding.length; i++) {
             row2 = document.createElement("tr");
             cell = document.createElement("td");
@@ -305,5 +329,14 @@ var createClickHandler2 = function (row, firstrowNum) {
             strUrl = fhir.url + singlePatient.result[i].reference;
             getJSON(strUrl, 0, "Finding", table);
         }
+    };
+};
+
+var createClickImagingStudy = function (row) {
+    return function () {
+        var cell = row.getElementsByTagName("td")[0];
+        var id = cell.innerHTML;
+        sessionStorage.setItem('imagingStudyID', id);
+        window.open("image-query.html", '_blank');
     };
 };

@@ -27,15 +27,18 @@ var getDICOM = function (url, callback) {
     xhr.send();
 };
 
-function clearTable(col1, col2) {
-    var header_row = document.getElementById("tablelist").rows[0];
-    header_row.cells[1].innerHTML = col1;
-    header_row.cells[2].innerHTML = col2;
-    document.getElementById("tablelist").getElementsByTagName("tbody")[0].innerHTML = "";
+function clearTable(headerContent, tableTarget) {
+    var header_row = tableTarget.rows[0];
+    for (var i = 0; i < headerContent.length; i++) {
+        header_row.cells[i].innerHTML = headerContent[i];
+    }
+    tableTarget.getElementsByTagName("tbody")[0].innerHTML = "";
 }
 
 function getPatientList() {
-    clearTable("Patient UID", "Patient Name");
+    var header = ["No", "Patient UID", "Patient Name"];
+    var tableTarget = document.getElementById("tablelist")
+    clearTable(header, tableTarget);
     getJSON(DICOMrootURL + '/patients/', null, null, function (data, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
         var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
@@ -58,7 +61,9 @@ function getPatientList() {
 }
 
 function getImagingStudyList() {
-    clearTable("Study Description", "Preview");
+    var header = ["No", "Study Description", "Preview"];
+    var tableTarget = document.getElementById("tablelist")
+    clearTable(header, tableTarget);
     var url = FHIRrootURL + '/ImagingStudy/';
     var pID = document.getElementById("PatientID").value.trim();
     if (pID != "") {
@@ -73,7 +78,9 @@ function getImagingStudyList() {
 }
 
 function getSeries(studyID) {
-    clearTable("Series Description", "Preview");
+    var header = ["No", "Series Description", "Preview"];
+    var tableTarget = document.getElementById("tablelist")
+    clearTable(header, tableTarget);
     var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series';
     getJSON(url, null, null, function (data, last, dataShowed) {
         drawtablelist(studyID, null, 0, data, "Series");
@@ -96,7 +103,9 @@ function getInstances(studyID, seriesID) {
 }
 
 function drawtablelist(studyID, seriesID, first, data, dataType) {
-    clearTable(dataType + " Description", "Preview");
+    var header = ["No", dataType + "Description", "Preview"];
+    var tableTarget = document.getElementById("tablelist")
+    clearTable(header, tableTarget);
     setcontentNavbar(studyID, seriesID, first, data, dataType);
 
     var callback;
@@ -176,20 +185,16 @@ function populateInstancesList(studyID, seriesID, first, data) {
                 dcmFile = url;
                 getDCM("A");
 
-                getJSON(FHIRrootURL + '/ImagingStudy?identifier=' + studyID, null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+                getJSON(FHIRrootURL + '/ImagingStudy?identifier=urn:oid:' + studyID, null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
-                    patientStudy_ID = data2.subject.reference;
-                    ImagingStudy_ID = data2.id;
-                    // var row = table.insertRow(-1);
-                    // var cell1 = row.insertCell(0);
-                    // var cell2 = row.insertCell(1);
-                    // var cell3 = row.insertCell(2);
-
-                    // var rows = table.getElementsByTagName("tr");
-                    // cell1.innerHTML = rows.length;
-                    // cell2.innerHTML = data2.identifier[0].value;
-                    // cell3.innerHTML = data2.name[0].text;
+                    patientStudy_ID = data2.entry[0].resource.subject.reference.split("/");
+                    patientStudy_ID = patientStudy_ID[1];
+                    ImagingStudy_ID = data2.entry[0].resource.id;
                 });
+
+                var header = ["Type Annotation", "SVG Annotation", "Post Annotation", "Finding Type", "Finding ID"];
+                var tableTarget = document.getElementById("myTable")
+                clearTable(header, tableTarget);
             };
 
             dcmFiles.push(instance["00080018"].Value[0]);
