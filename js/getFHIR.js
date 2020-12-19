@@ -336,8 +336,7 @@ function storedPixelValueToCanvas(ctx, scaleWidth, scaleHeight, pPanX, pPanY) {
 //compareAnswer used function
 function getFHIREdu(id, type) {
 	initialization();
-	var FHIRObsSource = "http://hapi.fhir.org/baseR4/Observation/";	//"http://203.64.84.213:8080/fhir/Observation/";
-	FHIRObsSource += id;
+	var FHIRObsSource =  fhir.url + "/Observation/" + id;
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.open("GET", FHIRObsSource, true);
