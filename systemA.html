@@ -692,7 +692,7 @@
 		}
 
 		function tablelist(svgstr1, table, annotationType) {
-			var table = table.getElementsByTagName("tbody")[0]
+			table = table.getElementsByTagName("tbody")[0];
 			var btn = document.createElement('input');
 			btn.style.backgroundColor = "#d9d9d9";
 			btn.type = "button";
@@ -747,7 +747,7 @@
 		}
 
 		function postFHIR(rowslength) {
-			var annotationType = document.getElementById("myTable").rows[rowslength].cells[0].innerHTML;
+			var annotationType = document.getElementById("myTable").getElementsByTagName("tbody")[0].rows[rowslength].cells[0].innerHTML;
 			document.getElementById("postAnnotationBtn" + rowslength).style.color = "black";
 			document.getElementById("postAnnotationBtn" + rowslength).value = "posted";
 			document.getElementById("postAnnotationBtn" + rowslength).disabled = true;
@@ -771,9 +771,9 @@
 
 			var id = 0;
 			var annotationType = table.rows[rowslength].cells[0].innerHTML;
-			for (var i = 0; i < rowslength; i++) {
-				if (document.getElementById("myTable").rows[i].cells[0].innerHTML == annotationType)
-					id += 1;
+			for (var i = 0; i <= rowslength; i++) {
+				if (table.rows[i].cells[0].innerHTML == annotationType)
+					id += i;
 			}
 			if (annotationType == "text")
 				id = ctext[id];
@@ -789,11 +789,12 @@
 		}
 
 		function HandlePopupResult(result, rowNum, findingType) {
+			var table = document.getElementById("myTable").getElementsByTagName("tbody")[0];
 			findingType = findingType.replaceAll("%20", " ");
-			if (document.getElementById("myTable").rows[rowNum].cells[4].innerHTML != "") {
-				document.getElementById("myTable").rows[rowNum].cells[4].innerHTML += ",<br>";
+			if (table.rows[rowNum].cells[4].innerHTML != "") {
+				table.rows[rowNum].cells[4].innerHTML += ",<br>";
 			}
-			document.getElementById("myTable").rows[rowNum].cells[4].innerHTML += findingType + "=" + result;
+			table.rows[rowNum].cells[4].innerHTML += findingType + "=" + result;
 		}
 
 		function createDReport() {
