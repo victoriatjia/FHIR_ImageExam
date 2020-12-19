@@ -1,8 +1,8 @@
 //GET FHIR value
 function getFHIR(val) {
-	//var val = document.getElementById("fhirObsID").value;
 	initialization();
 	var FHIRObsSource = fhir.url + "Observation/" + val;	
+
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.open("GET", FHIRObsSource, true);
@@ -335,7 +335,7 @@ function storedPixelValueToCanvas(ctx, scaleWidth, scaleHeight, pPanX, pPanY) {
 //compareAnswer used function
 function getFHIREdu(id, type) {
 	initialization();
-	var FHIRObsSource =  fhir.url + "/Observation/" + id;
+	var FHIRObsSource = fhir.url + "/Observation/" + id;
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.open("GET", FHIRObsSource, true);
