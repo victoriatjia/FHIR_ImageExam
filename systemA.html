@@ -228,6 +228,7 @@
 		}
 
 		function getDCM(system) {
+			initialization();
 			var xhttp = new XMLHttpRequest();
 			xhttp.open('GET', dcmFile, true);
 			xhttp.responseType = "arraybuffer"; //arraybuffer=binary file
