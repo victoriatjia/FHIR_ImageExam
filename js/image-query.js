@@ -29,13 +29,13 @@ function getDICOM(url, callback) {
     xhr.send();
 }
 
-function init(){
+function init() {
     var fhirID = sessionStorage.getItem('imagingStudyID');
-    if(fhirID!=undefined){
-        var url= FHIRrootURL + '/ImagingStudy/'+ fhirID;
+    if (fhirID != undefined) {
+        var url = FHIRrootURL + '/ImagingStudy/' + fhirID;
         getJSON(url, null, null, function (data, last, dataShowed) {
             drawtablelist(null, null, 0, data, "Series");
-    
+
         });
     }
 }
@@ -54,20 +54,29 @@ function getPatientList() {
     clearTable(header, tableTarget);
     getJSON(DICOMrootURL + '/patients/', null, null, function (data, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
-        var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
-
         for (var i = 0; i < data.length; i++) {
-            getJSON(FHIRrootURL + '/Patient/' + data[i], null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+            getJSON(DICOMrootURL + '/patients/' + data[i], null, null, function (orthancPatient) {
 
-                var row = table.insertRow(-1);
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                var cell3 = row.insertCell(2);
+                var patientID = "TCUMI106." + orthancPatient.MainDicomTags.PatientID;
 
-                var rows = table.getElementsByTagName("tr");
-                cell1.innerHTML = rows.length;
-                cell2.innerHTML = data2.id;
-                cell3.innerHTML = data2.name[0].text;
+                var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
+
+
+                getJSON(FHIRrootURL + '/Patient/' + patientID, null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+
+                    var row = table.insertRow(-1);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+
+                    var rows = table.getElementsByTagName("tr");
+                    cell1.innerHTML = rows.length;
+                    cell2.innerHTML = data2.identifier[0].value;//data2.id;//
+                    cell3.innerHTML = data2.name[0].text;
+                });
+
+
+
             });
         }
     });
@@ -81,11 +90,11 @@ function getImagingStudyList() {
 
     var pID = document.getElementById("PatientID").value.trim();
     if (pID != "") {
-        
 
-        url += '?subject=' + pID
+
+        url += '?subject=TCUMI106.' + pID
     }
-    
+
 
     //var url = DICOMrootURL + '/dicom-web/studies/?&PatientID=' + pID;
     getJSON(url, null, null, function (data, last, dataShowed) {
@@ -240,8 +249,7 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
                 studyNum = studyID;
                 seriesNum = data.uid;
                 getInstances(studyNum, seriesNum);
-            }
-            else if (dataType == "Instance") {
+            } else if (dataType == "Instance") {
                 studyNum = studyID;
                 seriesNum = data.uid;
                 getInstances(studyNum, seriesNum);
@@ -250,7 +258,9 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
         };
     };
 
-    var studyNum = 0, seriesNum = 0, instanceNum = 0;
+    var studyNum = 0,
+        seriesNum = 0,
+        instanceNum = 0;
 
     var description = '';
     if (dataType == "Study") {
@@ -270,12 +280,12 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
         studyNum = studyID;
         seriesNum = data.uid;
         instanceNum = data.instance[0].uid;
-        description+="StudyUID: " + studyNum + "<br>";
-        description+="SeriesUID: " + seriesNum + "<br>";
-        description+="Series Number: " + data.number + "<br>";
-        description+="Modality: " + data.modality.code + "<br>";
-        description+="Body Site: " + data.bodySite.display + "<br>";
-        description+="Number of instances: " + data.numberOfInstances + "<br>";
+        description += "StudyUID: " + studyNum + "<br>";
+        description += "SeriesUID: " + seriesNum + "<br>";
+        description += "Series Number: " + data.number + "<br>";
+        description += "Modality: " + data.modality.code + "<br>";
+        description += "Body Site: " + data.bodySite.display + "<br>";
+        description += "Number of instances: " + data.numberOfInstances + "<br>";
         row.onclick = createClickHandler(row, null);
     }
 
