@@ -234,7 +234,7 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
         instanceNum = data.instance[0].uid;
         description+="StudyUID: " + studyNum + "<br>";
         description+="SeriesUID: " + seriesNum + "<br>";
-        description+="number: " + data.number + "<br>";
+        description+="Series Number: " + data.number + "<br>";
         description+="Modality: " + data.modality.code + "<br>";
         description+="Body Site: " + data.bodySite.display + "<br>";
         description+="Number of instances: " + resource.numberOfInstances + "<br>";
