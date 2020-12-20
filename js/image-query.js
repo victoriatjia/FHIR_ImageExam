@@ -38,7 +38,6 @@ function init(){
     
         });
     }
-    
 }
 
 function clearTable(headerContent, tableTarget) {
@@ -274,7 +273,7 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
         description+="Series Number: " + data.number + "<br>";
         description+="Modality: " + data.modality.code + "<br>";
         description+="Body Site: " + data.bodySite.display + "<br>";
-        description+="Number of instances: " + resource.numberOfInstances + "<br>";
+        description+="Number of instances: " + data.numberOfInstances + "<br>";
         row.onclick = createClickHandler(row, null);
     }
 
