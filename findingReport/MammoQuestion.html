@@ -1,48 +1,11 @@
 <html>
 
 <head>
-	<style>
-		table,
-		tr,
-		td {
-			border: 2px solid black;
-			border-collapse: collapse;
-		}
-
-		.tab {
-			overflow: hidden;
-			background-color: #f1f1f1;
-		}
-
-		.tab button {
-			background-color: inherit;
-			float: left;
-			border: none;
-			outline: none;
-			cursor: pointer;
-			padding: 14px 16px;
-			transition: 0.3s;
-			font-size: 17px;
-		}
-
-		.tab button:hover {
-			background-color: #ddd;
-		}
-
-		.w3-red,
-		.w3-hover-red:hover {
-			background-color: white !important
-		}
-
-		.tabcontent {
-			padding: 6px 12px;
-			border: 1px solid #ccc;
-			border-top: none;
-		}
-	</style>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<script language="JavaScript" type="text/javascript" src="..\js\xmlOutput.js"></script>
 	<script language="JavaScript" type="text/javascript" src="..\js\jsonObservation.js"></script>
+	<script src="../js/settings.js"></script>
+	<link rel='stylesheet' typeof='text/css' media='all' href='../css/findingReport.css' />
 </head>
 
 <body>
@@ -118,11 +81,7 @@
 		</tr>
 	</table>
 	<script>
-		var ArrayFID;
 		getsession();
-		function getsession() {
-			ArrayFID = sessionStorage.getItem('findingID');
-		}
 	</script>
 </body>
 

@@ -3,8 +3,8 @@ var DICOMrootURL = 'http://203.64.84.218:8080/orthanc'; //'http://203.64.84.218:
 var FHIRrootURL = "http://203.64.84.213:8080/fhir";
 
 var fhir = {
-    //"url": "http://203.64.84.213:8080/fhir/"
-    "url": "http://hapi.fhir.org/baseR4/"
+    "url": "http://203.64.84.213:8080/fhir/"
+    //"url": "http://hapi.fhir.org/baseR4/"
 }
 
 var result = {

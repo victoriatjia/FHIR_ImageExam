@@ -1,48 +1,11 @@
 <html>
 
 <head>
-	<style>
-		table,
-		tr,
-		td {
-			border: 2px solid black;
-			border-collapse: collapse;
-		}
-
-		.tab {
-			overflow: hidden;
-			background-color: #f1f1f1;
-		}
-
-		.tab button {
-			background-color: inherit;
-			float: left;
-			border: none;
-			outline: none;
-			cursor: pointer;
-			padding: 14px 16px;
-			transition: 0.3s;
-			font-size: 17px;
-		}
-
-		.tab button:hover {
-			background-color: #ddd;
-		}
-
-		.w3-red,
-		.w3-hover-red:hover {
-			background-color: white !important
-		}
-
-		.tabcontent {
-			padding: 6px 12px;
-			border: 1px solid #ccc;
-			border-top: none;
-		}
-	</style>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<script language="JavaScript" type="text/javascript" src="..\js\xmlOutput.js"></script>
 	<script language="JavaScript" type="text/javascript" src="..\js\jsonObservation.js"></script>
+	<script src="../js/settings.js"></script>
+	<link rel='stylesheet' typeof='text/css' media='all' href='../css/findingReport.css' />
 </head>
 
 <body>
@@ -66,22 +29,46 @@
 							<tr>
 								<td rowspan="2" align="center">Location</td>
 								<td colspan="2">
-									<input type="radio" name="BreastSiteCS" id="C50.0" value="Nipple" />Nipple&nbsp;
-									<input type="radio" name="BreastSiteCS" id="C50.1"
-										value="Central portion of the breast" />Central portion of the breast&nbsp;
-									<input type="radio" name="BreastSiteCS" id="C50.2" value="UIQ" />UIQ&nbsp;
-									<input type="radio" name="BreastSiteCS" id="C50.3" value="LIQ" />LIQ&nbsp;
-									<input type="radio" name="BreastSiteCS" id="C50.4" value="UOQ" />UOQ&nbsp;
-									<input type="radio" name="BreastSiteCS" id="C50.5" value="LOQ" />LOQ&nbsp;<br>
-									<input type="radio" name="BreastSiteCS" id="C50.6" value="Axillary tail" />Axillary
-									tail
-									<input type="radio" name="BreastSiteCS" id="C50.8"
-										value="Overlapping lesion of breast" />Overlapping lesion of breast&nbsp;
-									<input type="radio" name="BreastSiteCS" id="C50.9"
-										value="Breast, not otherwise specified (NOS)" />Breast, not otherwise specified
-									(NOS)&nbsp;
-									<input type="radio" name="BreastSiteCS" id="C50.10"
-										value="sub-areolar" />sub-areolar&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.nipple"
+										value=" Nipple of left breast" />breast.left.nipple&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.nipple"
+										value="Nipple of right breast" />breast.right.nipple&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.centralportion"
+										value="Central portion of left breast" />breast.left.centralportion&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.centralportion"
+										value="Central portion of right breast" />breast.right.centralportion&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.uiq"
+										value="Upper inner quadrant of left breast" />breast.left.uiq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.uiq"
+										value="Upper inner quadrant of right breast" />breast.right.uiq&nbsp;<br>
+									<input type="radio" name="LocationCS" id="breast.left.liq"
+										value="Lower inner quadrant of left breast" />breast.left.liq
+									<input type="radio" name="LocationCS" id="breast.right.liq"
+										value="Lower inner quadrant of right breast" />breast.right.liq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.uoq"
+										value="Upper outer quadrant of left breast" />breast.left.uoq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.uoq"
+										value="Upper outer quadrant of right breast" />breast.right.uoq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.loq"
+										value="Lower outer quadrant of left breast" />breast.left.loq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.loq"
+										value="Lower outer quadrant of right breast" />breast.right.loq&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.axieltail"
+										value="Axieltail of left breast" />breast.left.axieltail&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.axieltail"
+										value="Axieltail of right breast" />breast.right.axieltail&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.overlapp"
+										value="Overlap of left breast" />breast.left.overlap&nbsp;<br>
+									<input type="radio" name="LocationCS" id="breast.right.overlapp"
+										value="Overlap of right breast" />breast.right.overlap&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.nos"
+										value="Not otherwise specified of right breast" />breast.left.nos&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.nos"
+										value="breast.right.nos" />breast.right.nos&nbsp;
+									<input type="radio" name="LocationCS" id="breast.left.subareolar"
+										value="Subareolar of left breast" />breast.left.subareolar&nbsp;
+									<input type="radio" name="LocationCS" id="breast.right.subareolar"
+										value="Subareolar of right breast" />breast.right.subareolar&nbsp;
 								</td>
 							</tr>
 							<tr>

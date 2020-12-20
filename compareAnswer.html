@@ -65,8 +65,6 @@
 			//end Annotation
 			
 			var studentAnswerID= sessionStorage.getItem('studentAnswer');
-			var answerIDArr= new Array(10);
-			answerIDArr= ['1703351', '1718679', '1718699', '1718710'];
 			if (studentAnswerID != null){
 				getFHIREdu(studentAnswerID, 'stuAnswer');
 			}	
@@ -103,6 +101,14 @@
 				}				
 			}
 			
+			var answerID= ['824', '842', '825', '837', '832', '826', '827'];
+			var instancesUID= ['1.2.840.113674.950809132639083.100',		//brain01-1
+			'1.2.840.113674.950809132635041.100',							//brain01-2
+			'1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.3.0',	//mammo01-1
+			'1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.7.0',	//mammo01-2
+			'1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.9.0',	//mammo01-3
+			'1.2.392.200046.100.2.1.621911555353.170721111746.1.1.1.001',	//chest01
+			'1.2.840.113564.192168200113.20170404142225485590.1203801020003'];
 			function getDCM(){
 				var xhttp = new XMLHttpRequest();
 				xhttp.open('GET', dcmFile, true);
@@ -119,13 +125,13 @@
 						generateLUT();
 						zoom(0);
 						//alert(UID);
-						var answerID;
+						for(var i=0;i<instancesUID.length;i++){ 
+							if(UID==instancesUID[i]){
+								getFHIREdu(answerID[i], 'tchrAnswer');
+								break;
+							}
+						}					
 						
-						if(UID=="1.2.840.113674.950809132639083.100")	answerID= answerIDArr[0];									//brain
-						else if(UID=="1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.3.0") 	answerID= answerIDArr[1];		//mammo
-						else if(UID== "1.2.392.200046.100.2.1.621911555353.170721111746.1.1.1.001")	answerID= answerIDArr[2];		//chest
-						else if(UID== "1.2.840.113564.192168200113.20170404142225485590.1203801020003")	answerID= answerIDArr[3];	//chest						
-						getFHIREdu(answerID, 'tchrAnswer');
 					}
 				}
 				xhttp.send();

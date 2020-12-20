@@ -25,6 +25,7 @@ massObservation =
         "coding": [{
             "system": "http://hl7.org/fhir/valueset-bodysite-laterality.html",
             "code": "",
+            "display": ""
         }]
     },
     "derivedFrom":
@@ -38,10 +39,12 @@ massObservation =
             "coding": [{
                 "system": "http://203.64.84.218/mammoDicomWebviewer/newCodeSystem/LocationCS.html",
                 "code": "",
+                "display": "WindowCenter"
             }, {
                 "fhir_comments": [" One view Only "],
                 "system": "HemisphereCS",
                 "code": "",
+                "display": ""
             }]
         }
     }, {
@@ -49,6 +52,7 @@ massObservation =
             "coding": [{
                 "system": "SizeCS",
                 "code": "",
+                "display": ""
             }]
         }
     }, {
@@ -56,6 +60,7 @@ massObservation =
             "coding": [{
                 "system": "http://hl7.org/fhir/us/breast-radiology/2019Sep/ValueSet-breastrad-ShapeVS.html",
                 "code": "",
+                "display": ""
             }]
         }
     }, {
@@ -63,6 +68,7 @@ massObservation =
             "coding": [{
                 "system": "http://hl7.org/fhir/us/breast-radiology/2019Sep/ValueSet-breastrad-MarginVS.html",
                 "code": "",
+                "display": ""
             }]
         }
     }, {
@@ -70,6 +76,7 @@ massObservation =
             "coding": [{
                 "system": "http://hl7.org/fhir/us/breast-radiology/2019Sep/ValueSet-breastrad-AbnormalityDensityVS.html",
                 "code": "",
+                "display": ""
             }]
         }
     }]
@@ -83,34 +90,39 @@ calcificationObservation =
     ,
     "valueCodeableConcept": {
         "coding": [{
-            "system": "http://hl7.org/fhir/us/breastcancer/CodeSystem/breastrad-RtOrLt",
+            "system": "http://hl7.org/fhir/valueset-bodysite-laterality.html",
             "code": "",
+            "display": ""
         }]
     },
     "component": [{
         "code": {
             "fhir_comments": ["Location"],
             "coding": [{
-                "system": "http://hl7.org/fhir/us/breastcancer/CodeSystem/oncology-BreastSiteCS",
+                "system": "http://203.64.84.218/mammoDicomWebviewer/newCodeSystem/LocationCS.html",
                 "code": "",
+                "display": "WindowCenter"
             }, {
                 "fhir_comments": [" One view Only "],
-                "system": "http://hl7.org/fhir/us/breastcancer/CodeSystem/breastrad-HemsphereViewCS",
+                "system": "HemisphereCS",
                 "code": "",
+                "display": ""
             }]
         }
     }, {
         "code": {
             "coding": [{
-                "system": "http://misat.org.tw/CodeSystem/DistributionCS",
+                "system": "http://hl7.org/fhir/us/breast-radiology/2020MAY/CodeSystem-CalcificationDistributionCS.html",
                 "code": "",
+                "display": ""
             }]
         }
     }, {
         "code": {
             "coding": [{
-                "system": "http://misat.org.tw/CodeSystem/MorphologyCS",
+                "system": "http://dicom.nema.org/medical/dicom/2016b/output/chtml/part16/sect_CID_6011.html",
                 "code": "",
+                "display": ""
             }]
         }
     }]
@@ -124,20 +136,23 @@ asymetryObservation =
     ,
     "valueCodeableConcept": {
         "coding": [{
-            "system": "http://hl7.org/fhir/us/breastcancer/CodeSystem/breastrad-RtOrLt",
+            "system": "http://hl7.org/fhir/valueset-bodysite-laterality.html",
             "code": "",
+            "display": ""
         }]
     },
     "component": [{
         "code": {
             "fhir_comments": ["Location"],
             "coding": [{
-                "system": "http://hl7.org/fhir/us/breastcancer/CodeSystem/oncology-BreastSiteCS",
+                "system": "http://203.64.84.218/mammoDicomWebviewer/newCodeSystem/LocationCS.html",
                 "code": "",
+                "display": "WindowCenter"
             }, {
                 "fhir_comments": [" One view Only "],
-                "system": "http://hl7.org/fhir/us/breastcancer/CodeSystem/breastrad-HemsphereViewCS",
+                "system": "HemisphereCS",
                 "code": "",
+                "display": ""
             }]
         }
     }]
@@ -151,20 +166,23 @@ architecturalDistortionObservation =
     ,
     "valueCodeableConcept": {
         "coding": [{
-            "system": "http://hl7.org/fhir/us/breastcancer/CodeSystem/breastrad-RtOrLt",
+            "system": "http://hl7.org/fhir/valueset-bodysite-laterality.html",
             "code": "",
+            "display": ""
         }]
     },
     "component": [{
         "code": {
             "fhir_comments": ["Location"],
             "coding": [{
-                "system": "http://hl7.org/fhir/us/breastcancer/CodeSystem/oncology-BreastSiteCS",
+                "system": "http://203.64.84.218/mammoDicomWebviewer/newCodeSystem/LocationCS.html",
                 "code": "",
+                "display": ""
             }, {
                 "fhir_comments": [" One view Only "],
-                "system": "http://hl7.org/fhir/us/breastcancer/CodeSystem/breastrad-HemsphereViewCS",
+                "system": "HemisphereCS",
                 "code": "",
+                "display": ""
             }]
         }
     }]
@@ -346,16 +364,27 @@ var DiagnosticReport = {
         "reference": ""
     },
     "encounter": {
-        "reference": "Encounter/1407978"
+        "reference": "Encounter/760"
     },
     "resultsInterpreter": [
         {
-            "reference": "Practitioner/1688430"
+            "reference": "Practitioner/TCUMI106-radiologist1"
         }
     ],
     "issued": "",
     "result": [],
+    "imagingStudy": {
+        "reference": ""
+    },
     "conclusionCode": [{
         "coding": []
     }]
 }
+// var fhir = {
+//     //"url": "http://203.64.84.218t:8045/fhir/"
+//     "url": "http://hapi.fhir.org/baseR4/"
+// }
+// var result = {
+//     "url": "http://hapi.fhir.org/baseDstu3/"
+// }
+

@@ -27,15 +27,18 @@ var getDICOM = function (url, callback) {
     xhr.send();
 };
 
-function clearTable(col1, col2) {
-    var header_row = document.getElementById("tablelist").rows[0];
-    header_row.cells[1].innerHTML = col1;
-    header_row.cells[2].innerHTML = col2;
-    document.getElementById("tablelist").getElementsByTagName("tbody")[0].innerHTML = "";
+function clearTable(headerContent, tableTarget) {
+    var header_row = tableTarget.rows[0];
+    for (var i = 0; i < headerContent.length; i++) {
+        header_row.cells[i].innerHTML = headerContent[i];
+    }
+    tableTarget.getElementsByTagName("tbody")[0].innerHTML = "";
 }
 
 function getPatientList() {
-    clearTable("Patient UID", "Patient Name");
+    var header = ["No", "Patient UID", "Patient Name"];
+    var tableTarget = document.getElementById("tablelist")
+    clearTable(header, tableTarget);
     getJSON(DICOMrootURL + '/patients/', null, null, function (data, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
         var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
@@ -58,7 +61,9 @@ function getPatientList() {
 }
 
 function getImagingStudyList() {
-    clearTable("Study Description", "Preview");
+    var header = ["No", "Study Description", "Preview"];
+    var tableTarget = document.getElementById("tablelist")
+    clearTable(header, tableTarget);
     var url = FHIRrootURL + '/ImagingStudy/';
     var pID = document.getElementById("PatientID").value.trim();
     if (pID != "") {
@@ -73,7 +78,9 @@ function getImagingStudyList() {
 }
 
 function getSeries(studyID) {
-    clearTable("Series Description", "Preview");
+    var header = ["No", "Series Description", "Preview"];
+    var tableTarget = document.getElementById("tablelist")
+    clearTable(header, tableTarget);
     var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series';
     getJSON(url, null, null, function (data, last, dataShowed) {
         drawtablelist(studyID, null, 0, data, "Series");
@@ -92,10 +99,13 @@ function getInstances(studyID, seriesID) {
     sessionStorage.setItem('seriesUID', seriesID);
     var url = "systemA.html";
     window.open(url, '_blank');
+
 }
 
 function drawtablelist(studyID, seriesID, first, data, dataType) {
-    clearTable(dataType + " Description", "Preview");
+    var header = ["No", dataType + "Description", "Preview"];
+    var tableTarget = document.getElementById("tablelist")
+    clearTable(header, tableTarget);
     setcontentNavbar(studyID, seriesID, first, data, dataType);
 
     var callback;
@@ -107,7 +117,7 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
             break;
         case 'Series':
             callback = getInstances;
-            dataAry= data.series;
+            dataAry = data.series;
             arr = data.identifier[0].value.split(':');
             studyID = arr[2];
             break;
@@ -174,6 +184,17 @@ function populateInstancesList(studyID, seriesID, first, data) {
                 sessionStorage.setItem('index', url);
                 dcmFile = url;
                 getDCM("A");
+
+                getJSON(FHIRrootURL + '/ImagingStudy?identifier=urn:oid:' + studyID, null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+
+                    patientStudy_ID = data2.entry[0].resource.subject.reference.split("/");
+                    patientStudy_ID = patientStudy_ID[1];
+                    ImagingStudy_ID = data2.entry[0].resource.id;
+                });
+
+                var header = ["Type Annotation", "SVG Annotation", "Post Annotation", "Finding Type", "Finding ID"];
+                var tableTarget = document.getElementById("myTable")
+                clearTable(header, tableTarget);
             };
 
             dcmFiles.push(instance["00080018"].Value[0]);
@@ -198,21 +219,21 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
             var id = cell.innerHTML;
             if (dataType == "Study") {
                 drawtablelist(0, 0, 0, data.resource, "Series");
-            } else if (dataType == "Series"){
+            } else if (dataType == "Series") {
                 studyNum = studyID;
                 seriesNum = data.uid;
                 getInstances(studyNum, seriesNum);
             }
-            else if (dataType == "Instance"){
+            else if (dataType == "Instance") {
                 studyNum = studyID;
                 seriesNum = data.uid;
                 getInstances(studyNum, seriesNum);
             }
-                //callback(data["0020000D"].Value[0], data["0020000E"].Value[0], data["00080018"].Value[0], fileType);
+            //callback(data["0020000D"].Value[0], data["0020000E"].Value[0], data["00080018"].Value[0], fileType);
         };
     };
 
-    var studyNum=0, seriesNum=0, instanceNum=0;
+    var studyNum = 0, seriesNum = 0, instanceNum = 0;
 
     var description = '';
     if (dataType == "Study") {
@@ -221,23 +242,32 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
         studyNum = arr[2];
         seriesNum = resource.series[0].uid;
         instanceNum = resource.series[0].instance[0].uid;
-        description+="StudyUID: " + studyNum + "<br>";
-        description+="Started Date: " + resource.started + "<br>";
+        description += "StudyUID: " + studyNum + "<br>";
+        description += "Started Date: " + resource.started + "<br>";
         var patientStr = resource.subject.reference.split('/');
-        description+="Patient ID: " + patientStr[1] + "<br>";
-        description+="Number of series: " + resource.numberOfSeries + "<br>";
-        description+="Number of instances: " + resource.numberOfInstances + "<br>";
+        description += "Patient ID: " + patientStr[1] + "<br>";
+        description += "Number of series: " + resource.numberOfSeries + "<br>";
+        description += "Number of instances: " + resource.numberOfInstances + "<br>";
         row.onclick = createClickHandler(row, null);
     } else if (dataType == "Series") {
         studyNum = studyID;
         seriesNum = data.uid;
         instanceNum = data.instance[0].uid;
+<<<<<<< HEAD
         description+="StudyUID: " + studyNum + "<br>";
         description+="SeriesUID: " + seriesNum + "<br>";
         description+="Series Number: " + data.number + "<br>";
         description+="Modality: " + data.modality.code + "<br>";
         description+="Body Site: " + data.bodySite.display + "<br>";
         description+="Number of instances: " + resource.numberOfInstances + "<br>";
+=======
+        description += "StudyUID: " + studyNum + "<br>";
+        description += "SeriesUID: " + seriesNum + "<br>";
+        description += "number: " + data.number + "<br>";
+        description += "Modality: " + data.modality.code + "<br>";
+        description += "Body Site: " + data.bodySite.display + "<br>";
+        description += "Number of instances: " + resource.numberOfInstances + "<br>";
+>>>>>>> 8803198d99de3dc5717f4b9feee268401e9a389d
         row.onclick = createClickHandler(row, null);
     }
 
