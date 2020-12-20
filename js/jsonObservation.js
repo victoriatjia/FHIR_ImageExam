@@ -262,12 +262,10 @@ questionObservation =
 }
 annotationObservation =
 {
-    "basedOn": [{
-        "identifier": {
-            "system": "http://127.0.0.1:5500/study_22.html",
-            "value": "1.2.1840.113681.2198909122.3931.3228559234.102.1"
-        }
-    }],
+	"identifier": [{
+		"system": "",
+		"value": ""
+	}],
     "category": [{
         "coding": [{
             "system": "http://hl7.org/fhir/observation-category",
@@ -283,62 +281,56 @@ annotationObservation =
     "component": [{
         "code": {
             "coding": [{
-                "system": "https://www.dicom.org.tw/",
-                "code": "SVG.Annotation",
-                "display": "SVG Annotation"
+                "system": "https://www.dicom.org.tw/SVG",
+                "code": "SVG_Annotation"
             }]
         },
         "valueString": ""
     }, {
         "code": {
             "coding": [{
-                "system": "https://www.dicom.org.tw/",
-                "code": "viewPort.sx",
-                "display": "viewPort.sx"
+                "system": "https://www.dicom.org.tw/Columns",
+                "code": "Columns"
             }]
         },
         "valueString": "0"
     }, {
         "code": {
             "coding": [{
-                "system": "https://www.dicom.org.tw/",
-                "code": "viewPort.sy",
-                "display": "viewPort.sy"
+                "system": "https://www.dicom.org.tw/Rows",
+                "code": "Rows"
             }]
         },
         "valueString": "0"
     }, {
         "code": {
             "coding": [{
-                "system": "https://www.dicom.org.tw/",
-                "code": "WindowCenter",
-                "display": "WindowCenter"
+                "system": "https://www.dicom.org.tw/WindowLevel",
+                "code": "WindowCenter"
             }]
         },
         "valueString": "2047"
     }, {
         "code": {
             "coding": [{
-                "system": "https://www.dicom.org.tw/",
-                "code": "WindowWidth",
-                "display": "WindowWidth"
+                "system": "https://www.dicom.org.tw/WindowLevel",
+                "code": "WindowWidth"
             }]
         },
         "valueString": "4096"
     }, {
         "code": {
             "coding": [{
-                "system": "https://www.dicom.org.tw/PixelData",
-                "code": "PixelData"
+                "system": "https://www.dicom.org.tw/OffsetOfPixelData",
+                "code": "OffsetOfPixelData"
             }]
         },
         "valueString": "11376"
     }, {
         "code": {
             "coding": [{
-                "system": "https://www.dicom.org.tw/",
-                "code": "DCM File",
-                "display": "DCM File"
+                "system": "https://www.dicom.org.tw/DCM_File",
+                "code": "DCM_File"
             }]
         },
         "valueString": "203.64.84.86/DicomWebViewer/Study2/DCMfiles/mammo1.dcm"

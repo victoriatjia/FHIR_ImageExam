@@ -9,37 +9,16 @@ function formInputsToXML(type, URL, uid, svgBase64, vw, vh, wc, ww, pixelData, d
 	Observation.identifier[0].value = uid;
 	Observation.status = "final";
 	Observation.code.coding[0].code = type;
-	Observation.code.coding[0].system = "https://www.dicom.org.tw/";
-	Observation.code.coding[0].Display = type;
-
 	//Observation.subject.reference = "Patient/" + p[0];
-	annotationObservation.basedOn[0].identifier.system = URL;
-	annotationObservation.basedOn[0].identifier.value = uid;
-	annotationObservation.category[0].coding[0].system = "http://hl7.org/fhir/observation-category";
-	annotationObservation.category[0].coding[0].code = "imaging";
-	annotationObservation.component[0].code.coding[0].system = baseURL + "SVG";
-	annotationObservation.component[0].code.coding[0].code = "SVG.Annotation";
 	annotationObservation.component[0].valueString = svgBase64;
-	annotationObservation.component[1].code.coding[0].system = baseURL + "Columns";
-	annotationObservation.component[1].code.coding[0].code = "Columns";
 	annotationObservation.component[1].valueString = vw;
-	annotationObservation.component[2].code.coding[0].system = baseURL + "Rows";
-	annotationObservation.component[2].code.coding[0].code = "Rows";
 	annotationObservation.component[2].valueString = vh;
-	annotationObservation.component[3].code.coding[0].system = baseURL + "WindowLevel";
-	annotationObservation.component[3].code.coding[0].code = "WindowCenter";
 	annotationObservation.component[3].valueString = wc;
-	annotationObservation.component[4].code.coding[0].system = baseURL + "WindowLevel";
-	annotationObservation.component[4].code.coding[0].code = "WindowWidth";
 	annotationObservation.component[4].valueString = ww;
-	annotationObservation.component[5].code.coding[0].system = baseURL + "OffsetOfPixelData";
-	annotationObservation.component[5].code.coding[0].code = "OffsetOfPixelData";
 	annotationObservation.component[5].valueString = pixelData;
-	annotationObservation.component[6].code.coding[0].system = baseURL + "DCM_File";
-	annotationObservation.component[6].code.coding[0].code = "DCM File";
 	annotationObservation.component[6].valueString = dcmFile;
 	output = Object.assign(Observation, annotationObservation);
-	//alert(output);
+	alert(output);
 	postData(output, "Observation", annotationType);
 }
 
