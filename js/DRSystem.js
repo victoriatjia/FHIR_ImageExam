@@ -293,7 +293,7 @@ var createClickHandler2 = function (row, firstrowNum) {
             var ImagingStudyValue = singlePatient.imagingStudy[i].reference.split("/");
             cell.innerHTML = String.fromCharCode(97 + i) + ". <u>" + ImagingStudyValue[1] + "</u>";
             row2.appendChild(cell);
-            row2.onclick = createClickImagingStudy(row);
+            row2.onclick = createClickImagingStudy(ImagingStudyValue[1]);
             table.appendChild(row2);
         }
 
@@ -332,11 +332,10 @@ var createClickHandler2 = function (row, firstrowNum) {
     };
 };
 
-var createClickImagingStudy = function (row) {
+var createClickImagingStudy = function (imagingStudyID) {
     return function () {
-        var cell = row.getElementsByTagName("td")[0];
-        var id = cell.innerHTML;
-        sessionStorage.setItem('imagingStudyID', id);
+        var id = imagingStudyID;
+        sessionStorage.setItem('imagingStudyID', imagingStudyID);
         window.open("image-query.html", '_blank');
     };
 };
