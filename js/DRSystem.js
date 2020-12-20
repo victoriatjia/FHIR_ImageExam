@@ -72,7 +72,7 @@ function setTablePatient(patientObservation, firstrowNum, type, tableTarget, fin
             bundle = patientObservation;
             patientObservation = patientObservation.entry[0].resource;
         }
-        var cellText = ["No", "Id", "Subject", "Encounter", "Practitioner", "Last Updated"];
+        var cellText = ["No", "Id", "Encounter", "Practitioner", "Last Updated"];
         setfirstRow(table, cellText);
         if (bundle != undefined) {
             for (var i = 0; i < bundle.entry.length; i++) {
@@ -198,7 +198,7 @@ function displayIdentifier(table, patientObservation, firstrowNum) {
     cell0 = document.createElement("td");
     cell0.innerHTML = patientObservation.id;
     row.appendChild(cell0);
-    var gvalue = [patientObservation.subject.reference, patientObservation.encounter.reference];
+    var gvalue = [patientObservation.encounter.reference];
     for (var i = 0; i < gvalue.length; i++) {
         var cell = document.createElement("td");
         var strValue = gvalue[i].split("/");
