@@ -66,7 +66,7 @@ function getPatientList() {
 
                 var rows = table.getElementsByTagName("tr");
                 cell1.innerHTML = rows.length;
-                cell2.innerHTML = data2.identifier[0].value;
+                cell2.innerHTML = data2.id;
                 cell3.innerHTML = data2.name[0].text;
             });
         }
@@ -81,6 +81,8 @@ function getImagingStudyList() {
 
     var pID = document.getElementById("PatientID").value.trim();
     if (pID != "") {
+        
+
         url += '?subject=' + pID
     }
     
@@ -118,7 +120,7 @@ function getInstances(studyID, seriesID) {
 }
 
 function drawtablelist(studyID, seriesID, first, data, dataType) {
-    var header = ["No", dataType + "Description", "Preview"];
+    var header = ["No", dataType + " Description", "Preview"];
     var tableTarget = document.getElementById("tablelist")
     clearTable(header, tableTarget);
     setcontentNavbar(studyID, seriesID, first, data, dataType);
