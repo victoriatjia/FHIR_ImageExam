@@ -1,18 +1,18 @@
 <html>
 
 <head>
-    <title>Image Query</title>
-    <script src="js/image-query.js"></script>
+    <title>Image Query</title>    
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
     <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:700italic,400,300,700' rel='stylesheet'
         type='text/css'>
     <link rel='stylesheet' typeof='text/css' media='all' href='css/image-query.css' />
+    <script src="js/settings.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="js/skel.min.js"></script>
     <script src="js/skel-panels.min.js"></script>
-    <script src="js/settings.js"></script>
+    <script src="js/image-query.js"></script>
     <noscript>
         <link rel="stylesheet" href="css/skel-noscript.css" />
         <link rel="stylesheet" href="css/style.css" />
@@ -48,7 +48,8 @@
 
     <!-- Main -->
     <div id="main" class="container">
-        <input type="text" id="PatientID" />
+        PatientID: <input type="text" id="PatientID" placeholder="Patient ID" /><br>
+        ImagingStudyID: <input type="text" id="ImagingStudyID" placeholder="ImagingStudyID" /><br>
         <button onclick="getImagingStudyList()">Get Imaging Study List</button>
         <button onclick="getPatientList()">Get Patient List</button>
         <div id="contentBar"></div>

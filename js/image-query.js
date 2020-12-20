@@ -1,4 +1,6 @@
-var getJSON = function (url, last, dataShowed, callback) {
+init();
+
+function getJSON(url, last, dataShowed, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.responseType = 'json';
@@ -10,9 +12,9 @@ var getJSON = function (url, last, dataShowed, callback) {
         }
     };
     xhr.send();
-};
+}
 
-var getDICOM = function (url, callback) {
+function getDICOM(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     //xhr.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -25,7 +27,19 @@ var getDICOM = function (url, callback) {
         }
     };
     xhr.send();
-};
+}
+
+function init(){
+    var fhirID = sessionStorage.getItem('imagingStudyID');
+    if(fhirID!=undefined){
+        var url= FHIRrootURL + '/ImagingStudy/'+ fhirID;
+        getJSON(url, null, null, function (data, last, dataShowed) {
+            drawtablelist(null, null, 0, data, "Series");
+    
+        });
+    }
+    
+}
 
 function clearTable(headerContent, tableTarget) {
     var header_row = tableTarget.rows[0];
@@ -65,10 +79,12 @@ function getImagingStudyList() {
     var tableTarget = document.getElementById("tablelist")
     clearTable(header, tableTarget);
     var url = FHIRrootURL + '/ImagingStudy/';
+
     var pID = document.getElementById("PatientID").value.trim();
     if (pID != "") {
         url += '?subject=' + pID
     }
+    
 
     //var url = DICOMrootURL + '/dicom-web/studies/?&PatientID=' + pID;
     getJSON(url, null, null, function (data, last, dataShowed) {
@@ -253,21 +269,12 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
         studyNum = studyID;
         seriesNum = data.uid;
         instanceNum = data.instance[0].uid;
-<<<<<<< HEAD
         description+="StudyUID: " + studyNum + "<br>";
         description+="SeriesUID: " + seriesNum + "<br>";
         description+="Series Number: " + data.number + "<br>";
         description+="Modality: " + data.modality.code + "<br>";
         description+="Body Site: " + data.bodySite.display + "<br>";
         description+="Number of instances: " + resource.numberOfInstances + "<br>";
-=======
-        description += "StudyUID: " + studyNum + "<br>";
-        description += "SeriesUID: " + seriesNum + "<br>";
-        description += "number: " + data.number + "<br>";
-        description += "Modality: " + data.modality.code + "<br>";
-        description += "Body Site: " + data.bodySite.display + "<br>";
-        description += "Number of instances: " + resource.numberOfInstances + "<br>";
->>>>>>> 8803198d99de3dc5717f4b9feee268401e9a389d
         row.onclick = createClickHandler(row, null);
     }
 
