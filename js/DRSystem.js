@@ -72,7 +72,7 @@ function setTablePatient(patientObservation, firstrowNum, type, tableTarget, fin
             bundle = patientObservation;
             patientObservation = patientObservation.entry[0].resource;
         }
-        var cellText = ["No", "Id", "Encounter", "Practitioner", "Last Updated"];
+        var cellText = ["No", "Diagnostic Report Id", "Encounter", "Practitioner", "Last Updated"];
         setfirstRow(table, cellText);
         if (bundle != undefined) {
             for (var i = 0; i < bundle.entry.length; i++) {
