@@ -216,6 +216,8 @@ function populateInstancesList(studyID, seriesID, first, data) {
                     patientStudy_ID = data2.entry[0].resource.subject.reference.split("/");
                     patientStudy_ID = patientStudy_ID[1];
                     ImagingStudy_ID = data2.entry[0].resource.id;
+                    modality = data2.entry[0].resource.series[0].modality.code;
+                    //alert(modality)
                 });
 
                 var header = ["Type Annotation", "SVG Annotation", "Post Annotation", "Finding Type", "Finding ID"];
