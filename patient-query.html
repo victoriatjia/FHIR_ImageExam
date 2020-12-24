@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>FHIR Image Exam System-Image Query</title>    
+    <title>FHIR Image Exam System-Patient Query</title>    
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
@@ -37,8 +37,8 @@
             <nav id="nav">
                 <ul>
                     <li><a href="index.html">HOMEPAGE</a></li>
-                    <li class="active"><a href="image-query.html">Image Query</a></li>
-                    <li><a href="patient-query.html">Patient Query</a></li>
+                    <li><a href="image-query.html">Image Query</a></li>
+                    <li class="active"><a href="patient-query.html">Patient Query</a></li>
                     <li><a href="DRSystem.html">Report Review</a></li>
                 </ul>
             </nav>
@@ -49,10 +49,8 @@
 
     <!-- Main -->
     <div id="main" class="container">
-        <button onclick="getPatientList()">Search Patient</button>
-        <br><br>
         <input type="text" id="PatientID" placeholder="Patient ID" />
-        <button onclick="getImagingStudyList()">Get Imaging Study List</button>
+        <button onclick="getPatientList()">Search Patient</button>
         
         <div id="contentBar">
         </div>
@@ -60,8 +58,8 @@
             <thead>
                 <tr>
                     <th>NO.</th>
-                    <th>Study Description</th>
-                    <th>Patient ID</th>
+                    <th>Patient UID</th>
+                    <th>Patient Name</th>
                 </tr>
             </thead>
             <tbody>
@@ -76,6 +74,9 @@
         Design by: Jeshika, Thalia, Victoria
     </div>
     <!-- Footer -->
+    <script>
+        getPatientList();
+    </script>
 </body>
 
 </html>
