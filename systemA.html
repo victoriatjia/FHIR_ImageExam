@@ -154,7 +154,7 @@
 				getDCM("A");
 			} else {
 				var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/';
-				getJSON(url, null, null, function (data, last, dataShowed) {
+				getJSON(url, function (data) {
 					dcmFiles = populateInstancesList(studyID, seriesID, 0, data);
 					initialization();
 				});
@@ -196,7 +196,7 @@
 		var svgLine, svgRect, svgEllipse, svgText;
 		var svgColor = "black",
 			svgStrokeWidth = 2,
-			svgFontType = "30px Arial";
+			svgFontType = "70px Arial";
 		//end Annotation
 
 		//modal
@@ -609,7 +609,7 @@
 		function showSVG() {
 			var table = document.getElementById("myTable");
 			var svgstr;
-			var svghead = '<svg width="' + sourceImage.width + '" height="' + scaledImage.height + '">\n';
+			var svghead = '<svg width="' + sourceImage.width + '" height="' + sourceImage.height + '">\n';
 			for (var i = lasttext; i < text; i++) {
 				svgstr = '<text x="' + parseInt(svgText[i][0]);
 				svgstr += '" y="' + parseInt(svgText[i][1]);
@@ -659,9 +659,9 @@
 		}
 
 		function educationalPlatform() {
-			var svghead = '<svg width="' + sourceImage.width + '" height="' + scaledImage.height + '">\n';
+			var svghead = '<svg width="' + sourceImage.width + '" height="' + sourceImage.height + '">\n';
 			var svg = window.btoa(svghead + allAnnotationSVG + '</svg>');
-			var xmlStr = formInputsToXML(modalityType, document.URL, UID.trim(), svg, sourceImage.width, sourceImage.height, windowCenter, windowWidth, pixelDataOffset, dcmFile, "");
+			//	var xmlStr = formInputsToXML(modalityType, document.URL, UID.trim(), svg, sourceImage.width, sourceImage.height, windowCenter, windowWidth, pixelDataOffset, dcmFile, "");
 
 			if (DR_ID != undefined) {
 				sessionStorage.setItem("DR_ID", DR_ID);
@@ -802,7 +802,7 @@
 		}
 		function HandlePopupResultDR(DR_id) {
 			DR_ID = DR_id;
-			alert(DR_ID);
+			//alert(DR_ID);
 		}
 		function createDReport() {
 			if (modality == "MG") {
