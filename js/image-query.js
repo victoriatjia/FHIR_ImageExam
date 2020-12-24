@@ -1,6 +1,6 @@
 init();
 
-function getJSON(url, last, dataShowed, callback) {
+function getJSON(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.responseType = 'json';
@@ -8,7 +8,7 @@ function getJSON(url, last, dataShowed, callback) {
     xhr.onload = function () {
         var status = xhr.status;
         if (status == 200) {
-            callback(xhr.response, last, dataShowed);
+            callback(xhr.response);
         }
     };
     xhr.send();
@@ -33,7 +33,7 @@ function init() {
     var fhirID = sessionStorage.getItem('imagingStudyID');
     if (fhirID != undefined) {
         var url = FHIRrootURL + '/ImagingStudy/' + fhirID;
-        getJSON(url, null, null, function (data, last, dataShowed) {
+        getJSON(url, null, null, function (data) {
             drawtablelist(null, null, 0, data, "Series");
 
         });
@@ -46,23 +46,25 @@ function clearTable(headerContent, tableTarget) {
         header_row.cells[i].innerHTML = headerContent[i];
     }
     tableTarget.getElementsByTagName("tbody")[0].innerHTML = "";
+    document.body.scrollTop = 200; // For Safari
+    document.documentElement.scrollTop = 200; // For Chrome, Firefox, IE and Opera
 }
 
 function getPatientList() {
     var header = ["No", "Patient UID", "Patient Name"];
     var tableTarget = document.getElementById("tablelist")
     clearTable(header, tableTarget);
-    getJSON(DICOMrootURL + '/patients/', null, null, function (data, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+    getJSON(DICOMrootURL + '/patients/', function (data) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
         for (var i = 0; i < data.length; i++) {
-            getJSON(DICOMrootURL + '/patients/' + data[i], null, null, function (orthancPatient) {
+            getJSON(DICOMrootURL + '/patients/' + data[i], function (orthancPatient) {
 
                 var patientID = "TCUMI106." + orthancPatient.MainDicomTags.PatientID;
 
                 var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
 
 
-                getJSON(FHIRrootURL + '/Patient/' + patientID, null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+                getJSON(FHIRrootURL + '/Patient/' + patientID, function (data2) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
                     var row = table.insertRow(-1);
                     var cell1 = row.insertCell(0);
@@ -71,8 +73,21 @@ function getPatientList() {
 
                     var rows = table.getElementsByTagName("tr");
                     cell1.innerHTML = rows.length;
-                    cell2.innerHTML = data2.identifier[0].value;//data2.id;//
-                    cell3.innerHTML = data2.name[0].text;
+                    if(data2.identifier==null)
+                    {
+                        var id = data2.id.split('.');
+                        cell2.innerHTML = id[1];//
+                    }
+                    else{
+                        cell2.innerHTML = data2.identifier[0].value;//data2.id;//
+                    }
+                    if(data2.name==null){
+                        var id = data2.id.split('.');
+                        cell3.innerHTML = id[1];//
+                    }else {
+                        cell3.innerHTML = data2.name[0].text;
+                    }
+                    
                 });
 
 
@@ -90,28 +105,26 @@ function getImagingStudyList() {
 
     var pID = document.getElementById("PatientID").value.trim();
     if (pID != "") {
-
-
         url += '?subject=TCUMI106.' + pID
     }
 
 
     //var url = DICOMrootURL + '/dicom-web/studies/?&PatientID=' + pID;
-    getJSON(url, null, null, function (data, last, dataShowed) {
+    getJSON(url, function (data) {
         drawtablelist(null, null, 0, data, "Study");
 
     });
 }
 
-function getSeries(studyID) {
-    var header = ["No", "Series Description", "Preview"];
-    var tableTarget = document.getElementById("tablelist")
-    clearTable(header, tableTarget);
-    var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series';
-    getJSON(url, null, null, function (data, last, dataShowed) {
-        drawtablelist(studyID, null, 0, data, "Series");
-    });
-}
+// function getSeries(studyID) {
+//     var header = ["No", "Series Description", "Preview"];
+//     var tableTarget = document.getElementById("tablelist")
+//     clearTable(header, tableTarget);
+//     var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series';
+//     getJSON(url, null, null, function (data, last, dataShowed) {
+//         drawtablelist(studyID, null, 0, data, "Series");
+//     });
+// }
 
 function getInstances(studyID, seriesID) {
     //https://orthanc.dicom.tw/wado/?requestType=WADO&contentType=image/jpeg&studyUID=1.2.840.113674.1118.54.200&seriesUID=1.2.840.113674.1118.54.179.300&objectUID=1.2.840.113674.950809132635041.100
@@ -134,15 +147,12 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
     clearTable(header, tableTarget);
     setcontentNavbar(studyID, seriesID, first, data, dataType);
 
-    var callback;
     var dataAry;
     switch (dataType) {
         case 'Study':
-            callback = getSeries;
             dataAry = data.entry;
             break;
         case 'Series':
-            callback = getInstances;
             dataAry = data.series;
             arr = data.identifier[0].value.split(':');
             studyID = arr[2];
@@ -153,98 +163,29 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
     }
 
     for (var j = first; j < dataAry.length; j++) {
-
-        drawInnertable(callback, dataAry[j], studyID, seriesID, first, data, dataType);
-        // if (dataType == "Instance") {
-        //     drawInnertable(downloadFile, data[j], studyID, seriesID, first, last, data, dataType);
-        // }
-        // else if (dataType == "Study") {
-        //     var url = DICOMrootURL + '/dicom-web/studies/' + data[j]["0020000D"].Value[0] + '/series/';
-        //     getJSON(url, last, data, function (data2, last, dataShowed) {
-        //         var url2 = DICOMrootURL + '/dicom-web/studies/' + data2[0]["0020000D"].Value[0] + '/series/' + data2[0]["0020000E"].Value[0] + '/instances';
-        //         getJSON(url2, last, dataShowed, function (data3, last, dataShowed) {
-        //             drawInnertable(getSeries, data3, studyID, seriesID, first, last, dataShowed, dataType);
-        //         });
-        //     });
-        // }
-        // else if (dataType == "Series") {
-        //     var url = DICOMrootURL + '/dicom-web/studies/' + data[j]["0020000D"].Value[0] + '/series/' + data[j]["0020000E"].Value[0] + '/instances/';
-        //     getJSON(url, last, data, function (data2, last, dataShowed) {
-        //         drawInnertable(getInstances, data2, studyID, seriesID, first, last, dataShowed, dataType);
-        //     });
-        // }
-    }
-
-}
-
-function populateInstancesList(studyID, seriesID, first, data) {
-    if (first >= 0 && first < data.length) {
-        if (first + 10 > data.length) {
-            last = data.length;
+        if(dataType != "Study" || dataAry[j].resource.series[0].modality.code !="SR"){
+            // var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
+            // var row = table.insertRow(-1);
+            // var cell = row.insertCell(0);
+            // cell.colSpan=3;
+            // cell.innerHTML="Not an Image"
+            drawInnertable(dataAry[j], studyID, seriesID, first, dataType);
         } else {
-            last = first + 10;
+            
         }
-
-        var dcmFiles = [];
-
-        for (var j = first; j < last; j++) {
-            var instance = data[j];
-            var list = document.getElementById("instancesList");
-            var li = document.createElement('li');
-
-            var studyID = sessionStorage.getItem('studyUID');
-            var seriesID = sessionStorage.getItem('seriesUID');
-            var img = document.createElement('img');
-            img.width = 100;
-            img.height = 100;
-            img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + instance["00080018"].Value[0];
-            //li.onclick="setDCM("+ j+")";
-            li.value = j;
-            li.onclick = function () {
-                var v = this.value;
-                //alert(dcmFiles[v]);
-                //    var url = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + dcmFiles[v];
-                //var url = DICOMrootURL + "/orthanc/dicom-web/studies/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.4.0/series/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.5.0/instances/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.3.0";
-                var url = DICOMrootURL + "/dicom-web/studies/" + studyID + "/series/" + seriesID + "/instances/" + dcmFiles[v];
-
-                sessionStorage.setItem('index', url);
-                dcmFile = url;
-                getDCM("A");
-
-                getJSON(FHIRrootURL + '/ImagingStudy?identifier=urn:oid:' + studyID, null, null, function (data2, last, dataShowed) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
-
-                    patientStudy_ID = data2.entry[0].resource.subject.reference.split("/");
-                    patientStudy_ID = patientStudy_ID[1];
-                    ImagingStudy_ID = data2.entry[0].resource.id;
-                    modality = data2.entry[0].resource.series[0].modality.code;
-                    //alert(modality)
-                });
-
-                var header = ["Type Annotation", "SVG Annotation", "Post Annotation", "Finding Type", "Finding ID"];
-                var tableTarget = document.getElementById("myTable")
-                clearTable(header, tableTarget);
-            };
-
-            dcmFiles.push(instance["00080018"].Value[0]);
-
-            li.appendChild(img);
-            list.appendChild(li);
-        }
-        return dcmFiles;
+        
     }
+
 }
 
-function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, dataType) {
-    var datavalue;
+function drawInnertable(data, studyID, seriesID, first, dataType) {
     var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
     var row = table.insertRow(-1);
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
     var cell3 = row.insertCell(2);
-    var createClickHandler = function (row, fileType) {
+    var createClickHandler = function () {
         return function () {
-            var cell = row.getElementsByTagName("td")[0].innerHTML;
-            var id = cell.innerHTML;
             if (dataType == "Study") {
                 drawtablelist(0, 0, 0, data.resource, "Series");
             } else if (dataType == "Series") {
@@ -256,7 +197,6 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
                 seriesNum = data.uid;
                 getInstances(studyNum, seriesNum);
             }
-            //callback(data["0020000D"].Value[0], data["0020000E"].Value[0], data["00080018"].Value[0], fileType);
         };
     };
 
@@ -284,9 +224,13 @@ function drawInnertable(callback, data, studyID, seriesID, first, dataShowed, da
         instanceNum = data.instance[0].uid;
         description += "StudyUID: " + studyNum + "<br>";
         description += "SeriesUID: " + seriesNum + "<br>";
+        if(data.number!=null);
         description += "Series Number: " + data.number + "<br>";
+        if(data.modality!=null)
         description += "Modality: " + data.modality.code + "<br>";
+        if(data.bodySite!=null)
         description += "Body Site: " + data.bodySite.display + "<br>";
+        if(data.numberOfInstances!=null)
         description += "Number of instances: " + data.numberOfInstances + "<br>";
         row.onclick = createClickHandler(row, null);
     }
@@ -347,25 +291,58 @@ function cleardiv() {
     }
 }
 
-function downloadFile(studyID, seriesID, instanceID, fileType) {
-    var url;
-    if (fileType == "download") {
-        url = DICOMrootURL + "/dicom-web/studies/" + studyID + "/series/" + seriesID + "/instances/" + instanceID;
-        getDICOM(url, function (data) {
-            // var element = document.getElementById('dicomImage');
-            // cornerstone.enable(element);
-            // cornerstone.loadImage(data).then(function (image) {
-            //     cornerstone.displayImage(element, image);
-            // });
-        });
-    } else if (fileType == "json") {
-        url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/?&SOPInstanceUID=' + instanceID;
-    } else if (fileType == "view") {
-        var param = "https://orthanc.dicom.tw/dicom-web/studies/" + studyID + "/series/" + seriesID + "/instances/" + instanceID;
-        //var param = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + instanceID;
-        param = btoa(param);
-        param = encodeURI(param)
-        url = "systemA.html?image=" + param;
+
+function populateInstancesList(studyID, seriesID, first, data) {
+    if (first >= 0 && first < data.length) {
+        if (first + 10 > data.length) {
+            last = data.length;
+        } else {
+            last = first + 10;
+        }
+
+        var dcmFiles = [];
+
+        for (var j = first; j < last; j++) {
+            var instance = data[j];
+            var list = document.getElementById("instancesList");
+            var li = document.createElement('li');
+
+            var studyID = sessionStorage.getItem('studyUID');
+            var seriesID = sessionStorage.getItem('seriesUID');
+            var img = document.createElement('img');
+            img.width = 100;
+            img.height = 100;
+            img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + instance["00080018"].Value[0];
+            //li.onclick="setDCM("+ j+")";
+            li.value = j;
+            li.onclick = function () {
+                var v = this.value;
+                //alert(dcmFiles[v]);
+                //    var url = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + dcmFiles[v];
+                //var url = DICOMrootURL + "/orthanc/dicom-web/studies/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.4.0/series/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.5.0/instances/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.3.0";
+                var url = DICOMrootURL + "/dicom-web/studies/" + studyID + "/series/" + seriesID + "/instances/" + dcmFiles[v];
+
+                sessionStorage.setItem('index', url);
+                dcmFile = url;
+                getDCM("A");
+
+                getJSON(FHIRrootURL + '/ImagingStudy?identifier=urn:oid:' + studyID, function (data2) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+
+                    patientStudy_ID = data2.entry[0].resource.subject.reference.split("/");
+                    patientStudy_ID = patientStudy_ID[1];
+                    ImagingStudy_ID = data2.entry[0].resource.id;
+                });
+
+                var header = ["Type Annotation", "SVG Annotation", "Post Annotation", "Finding Type", "Finding ID"];
+                var tableTarget = document.getElementById("myTable")
+                clearTable(header, tableTarget);
+            };
+
+            dcmFiles.push(instance["00080018"].Value[0]);
+
+            li.appendChild(img);
+            list.appendChild(li);
+        }
+        return dcmFiles;
     }
-    window.open(url, '_blank');
 }
