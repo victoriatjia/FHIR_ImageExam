@@ -1,7 +1,7 @@
 //GET FHIR value
 function getFHIR(val) {
 	initialization();
-	var FHIRObsSource = fhir.url + "Observation/" + val;	
+	var FHIRObsSource = fhir.url + "Observation/" + val;
 
 
 	var xhttp = new XMLHttpRequest();
@@ -347,7 +347,127 @@ function getFHIREdu(id, type) {
 	};
 	xhttp.send();
 }
+function getFHIRDR(id, type) {
+	initialization();
+	var FHIRObsSource = fhir.url + "/DiagnosticReport/" + id;
 
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", FHIRObsSource, true);
+	xhttp.onreadystatechange = function () {
+		if (this.readyState == 4) {
+			var res = JSON.parse(this.responseText);
+			if (type == "stuAnswer") { DRObservation = res; displayDR(); }//showOutput2(this.responseText);
+			else showTeacherAnswer(this.responseText);
+		}
+	};
+	xhttp.send();
+}
+function displayDR() {
+	//clearDiv(document.getElementById("findingBox"));
+	var contactBox = document.getElementById("contactBox");
+	clearDiv(contactBox);
+
+	var singlePatient = (DRObservation.entry == undefined) ? DRObservation : DRObservation.entry[id - 1].resource;
+
+	var table = document.createElement("table");
+	table.style.border = 0;
+	table.style.borderCollapse = "collapse";
+	table.style.borderBottom = 1;
+	table.style.borderBottomColor = "black";
+	table.style.width = "100%";
+	table.style.backgroundColor = "white";
+	table.style.fontSize = "18px";
+
+	contactBox.appendChild(table);
+	table.id = "tablegeneralDR";
+
+	var row2 = document.createElement("tr");
+	var cell = document.createElement("th");
+	cell.colSpan = "3";
+	cell.style.textAlign = "center";
+	cell.innerHTML = "Diagnostic Report";
+	row2.appendChild(cell);
+	table.appendChild(row2);
+
+	var gname = ["ID", "Patient", "Encounter", "Practitioner", "Last updated"];
+	var gvalue = [singlePatient.id, singlePatient.subject.reference, singlePatient.encounter.reference];
+	var PractitionerValue = "";
+	for (var i = 0; i < singlePatient.resultsInterpreter.length; i++) {
+		if (i != 0) PractitionerValue += ',<br>';
+		var practstr = singlePatient.resultsInterpreter[i].reference.split("/");
+		PractitionerValue += practstr[1];
+	}
+	for (var i = 1; i < gvalue.length; i++) {
+		var strValue = gvalue[i].split("/");
+		gvalue[i] = strValue[1];
+	}
+	gvalue.push(PractitionerValue);
+	gvalue.push(singlePatient.meta.lastUpdated);
+	for (var i = 0; i < gname.length; i++) {
+		row2 = document.createElement("tr");
+		cell = document.createElement("td");
+		row2.className = "noBorder";
+		cell.innerHTML = gname[i] + ":";
+		row2.appendChild(cell);
+
+		cell = document.createElement("td");
+		cell.innerHTML = gvalue[i];
+		row2.appendChild(cell);
+		table.appendChild(row2);
+	}
+	row2 = document.createElement("tr");
+	cell = document.createElement("th");
+	cell.innerHTML = "Imaging Study <h style='font-size:16px'>(Click below id to view the imaging study)</h>";
+	cell.colSpan = "3";
+	cell.style.fontSize = "20px";
+	row2.appendChild(cell);
+	table.appendChild(row2);
+
+	for (var i = 0; i < singlePatient.imagingStudy.length; i++) {
+		row2 = document.createElement("tr");
+		cell = document.createElement("td");
+		row2.className = "noBorder";
+		cell.colSpan = "3";
+		var ImagingStudyValue = singlePatient.imagingStudy[i].reference.split("/");
+		cell.innerHTML = String.fromCharCode(97 + i) + ". <u>" + ImagingStudyValue[1] + "</u>";
+		row2.appendChild(cell);
+		row2.onclick = createClickImagingStudy(ImagingStudyValue[1]);
+		table.appendChild(row2);
+	}
+
+	row2 = document.createElement("tr");
+	cell = document.createElement("th");
+	cell.innerHTML = "Conclusion";
+	cell.colSpan = "3";
+	cell.style.fontSize = "20px";
+	row2.appendChild(cell);
+	table.appendChild(row2);
+
+	//        var ResultValue = "";
+	for (var i = 0; i < singlePatient.conclusionCode[0].coding.length; i++) {
+		row2 = document.createElement("tr");
+		cell = document.createElement("td");
+		row2.className = "noBorder";
+		cell.colSpan = "3";
+		cell.innerHTML = String.fromCharCode(97 + i) + ". " + singlePatient.conclusionCode[0].coding[i].display;
+		row2.appendChild(cell);
+		table.appendChild(row2);
+	}
+
+	row2 = document.createElement("tr");
+	cell = document.createElement("th");
+	cell.innerHTML = "<u>Findings </u>";
+	cell.colSpan = "3";
+	cell.style.fontSize = "20px";
+	row2.appendChild(cell);
+	table.appendChild(row2);
+
+	var ResultValue = "";
+	for (var i = 0; i < singlePatient.result.length; i++) {
+		strUrl = fhir.url + singlePatient.result[i].reference;
+		getJSON(strUrl, 0, "Finding", table);
+	}
+}
 function showTeacherAnswer(str) {
 	var jsonOBJ = JSON.parse(str);
 	var base64 = jsonOBJ.component[0].valueString;
@@ -445,6 +565,10 @@ function showOutput2(str) {
 		dcmFile = jsonOBJ.component[6].valueString;
 		var base64 = jsonOBJ.component[0].valueString;
 		var svg = atob(base64);
+		var wait = 0;
+		while (svg == undefined) {
+			wait++;
+		}
 		var parser = new DOMParser();
 		var xmlDoc = parser.parseFromString(svg, "text/xml");
 

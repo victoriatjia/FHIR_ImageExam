@@ -5,6 +5,36 @@
 	<script src="js/xmlOutput.js"></script>
 	<script src="js/getFHIR.js"></script>
 	<script src="js/settings.js"></script>
+	<script src="js/DRSystem.js"></script>
+	<style>
+		th {
+			text-align: left;
+			vertical-align: middle;
+			font-size: 20px;
+			font-weight: bold;
+			height: 50px;
+			background-color: #e6e6e6;
+		}
+
+		tr.noBorder td {
+			border: 0;
+		}
+
+		.Header {
+			margin: 10px auto;
+			padding: 15px 25px;
+			border-left: 6px solid #1c6dd9;
+			display: flex;
+			align-items: center;
+		}
+
+		.Header .Title {
+			float: left;
+			width: 100px;
+			color: white;
+		}
+	</style>
+	<!-- <link rel='stylesheet' typeof='text/css' media='all' href='css/DRSystem_style.css' /> -->
 </head>
 
 <body>
@@ -23,7 +53,29 @@
 					<canvas id="tchrCanvas" style="z-index:-1"></canvas>
 					<canvas id="tchrDrawCanvas" style="position: absolute; z-index:1"></canvas>
 				</td>
+
 			</tr>
+			<tr>
+				<td>
+					<header>
+						<h3 style="color:white">Diagnostic Report List</h3>
+					</header>
+					<!-- <div id="listPatient"></div> -->
+					<br>
+					<div id="contactBox"></div>
+
+					<br><br>
+					<div id="listPatient"></div>
+					<br><br>
+					<div id="findingBox"></div>
+				</td>
+				<td>
+					<canvas id="tchrCanvas" style="z-index:-1"></canvas>
+					<canvas id="tchrDrawCanvas" style="position: absolute; z-index:1"></canvas>
+				</td>
+
+			</tr>
+
 		</table>
 		<center>
 
@@ -67,10 +119,12 @@
 				var svgColor = "black", svgStrokeWidth = 2, svgFontType = "30px Arial";
 				//end Annotation
 
-				var studentAnswerID = sessionStorage.getItem('studentAnswer');
+				var studentAnswerID = sessionStorage.getItem('DR_ID');
 				if (studentAnswerID != null) {
-					getFHIREdu(studentAnswerID, 'stuAnswer');
+					//alertstudentAnswerID
+					getFHIRDR(studentAnswerID, 'stuAnswer');
 				}
+
 
 				function initialization() {
 					line1 = 0, rect1 = 0, ellipse1 = 0, polygon1 = 0, text1 = 0;

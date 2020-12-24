@@ -141,8 +141,8 @@ function setTablePatient(patientObservation, firstrowNum, type, tableTarget, fin
         for (var i = 0; i < singlePatient.derivedFrom.length; i++) {
             if (i != 0) AnnotationValue += ',<br>';
             var str = singlePatient.derivedFrom[i].reference.split("/");
-
             AnnotationValue += "<a target='_blank' href='systemA.html?AnnotationID=" + str[str.length - 1] + "'>" + str[str.length - 1];
+            getFHIREdu(str[str.length - 1], 'stuAnswer');
         }
         gvalue.push(FindingTypeValue);
         gvalue.push(AnnotationValue);

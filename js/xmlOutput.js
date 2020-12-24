@@ -1,7 +1,7 @@
 var obsID = '';
 var ArrayFID;
 var params = {};
-var patientStudy_ID, ImagingStudy_ID, modality;
+var patientStudy_ID, ImagingStudy_ID, DRObservation, modality, DR_ID;
 
 function formInputsToXML(type, URL, uid, svgBase64, vw, vh, wc, ww, pixelData, dcmFile, annotationType) {
 	var baseURL = "https://www.dicom.org.tw/";
@@ -136,7 +136,7 @@ function mammoXML(formID, formCode) {
 			conclusion["display"] = arrValue[i];
 			DiagnosticReport.conclusionCode[0].coding.push(conclusion);
 		}
-		postData(DiagnosticReport, "DiagnosticReport", "");
+		postData(DiagnosticReport, "DiagnosticReport", formID);
 	}
 	if (formID != 'QuestionCheck') postData(output, "Observation", formID);
 }
@@ -192,6 +192,14 @@ function postData(jsonString, type, formID) {
 			if (formID == 'mass' || formID == 'calcifications' || formID == 'asymmetry' || formID == 'architecturalDistortion') {
 				try {
 					window.opener.HandlePopupResult(ret.id, params["rowNum"], params["findingType"]);
+				}
+				catch (err) { }
+				window.close();
+				return false;
+			}
+			if (formID == 'QuestionCheck') {
+				try {
+					window.opener.HandlePopupResultDR(ret.id);
 				}
 				catch (err) { }
 				window.close();
