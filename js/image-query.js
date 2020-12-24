@@ -54,47 +54,74 @@ function getPatientList() {
     var header = ["No", "Patient UID", "Patient Name"];
     var tableTarget = document.getElementById("tablelist")
     clearTable(header, tableTarget);
-    getJSON(DICOMrootURL + '/patients/', function (data) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+    var pID = document.getElementById("PatientID").value.trim();
+    if(pID!="" ){
+        getJSON(FHIRrootURL + '/Patient/TCUMI106.' + pID, function (data2) {
+            var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
+            var row = table.insertRow(-1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
 
-        for (var i = 0; i < data.length; i++) {
-            getJSON(DICOMrootURL + '/patients/' + data[i], function (orthancPatient) {
+            var rows = table.getElementsByTagName("tr");
+            cell1.innerHTML = rows.length;
+            if(data2.identifier==null)
+            {
+                var id = data2.id.split('.');
+                cell2.innerHTML = id[1];//
+            }
+            else{
+                cell2.innerHTML = data2.identifier[0].value;//data2.id;//
+            }
+            if(data2.name==null){
+                var id = data2.id.split('.');
+                cell3.innerHTML = id[1];//
+            }else {
+                cell3.innerHTML = data2.name[0].text;
+            }
+            
+        });
 
-                var patientID = "TCUMI106." + orthancPatient.MainDicomTags.PatientID;
+    }
+    else {
+        getJSON(DICOMrootURL + '/patients/', function (data) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
-                var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
-
-
-                getJSON(FHIRrootURL + '/Patient/' + patientID, function (data2) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
-
-                    var row = table.insertRow(-1);
-                    var cell1 = row.insertCell(0);
-                    var cell2 = row.insertCell(1);
-                    var cell3 = row.insertCell(2);
-
-                    var rows = table.getElementsByTagName("tr");
-                    cell1.innerHTML = rows.length;
-                    if(data2.identifier==null)
-                    {
-                        var id = data2.id.split('.');
-                        cell2.innerHTML = id[1];//
-                    }
-                    else{
-                        cell2.innerHTML = data2.identifier[0].value;//data2.id;//
-                    }
-                    if(data2.name==null){
-                        var id = data2.id.split('.');
-                        cell3.innerHTML = id[1];//
-                    }else {
-                        cell3.innerHTML = data2.name[0].text;
-                    }
-                    
+            for (var i = 0; i < data.length; i++) {
+                getJSON(DICOMrootURL + '/patients/' + data[i], function (orthancPatient) {
+                    var patientID = "TCUMI106." + orthancPatient.MainDicomTags.PatientID;
+                    var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
+                    getJSON(FHIRrootURL + '/Patient/' + patientID, function (data2) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+    
+                        var row = table.insertRow(-1);
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+    
+                        var rows = table.getElementsByTagName("tr");
+                        cell1.innerHTML = rows.length;
+                        if(data2.identifier==null)
+                        {
+                            var id = data2.id.split('.');
+                            cell2.innerHTML = id[1];//
+                        }
+                        else{
+                            cell2.innerHTML = data2.identifier[0].value;//data2.id;//
+                        }
+                        if(data2.name==null){
+                            var id = data2.id.split('.');
+                            cell3.innerHTML = id[1];//
+                        }else {
+                            cell3.innerHTML = data2.name[0].text;
+                        }
+                        
+                    });
+    
+    
+    
                 });
-
-
-
-            });
-        }
-    });
+            }
+        });
+    }
 }
 
 function getImagingStudyList() {
