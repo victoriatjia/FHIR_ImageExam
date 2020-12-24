@@ -154,7 +154,7 @@
 				getDCM("A");
 			} else {
 				var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/';
-				getJSON(url, null, null, function (data, last, dataShowed) {
+				getJSON(url, function (data) {
 					dcmFiles = populateInstancesList(studyID, seriesID, 0, data);
 					initialization();
 				});
