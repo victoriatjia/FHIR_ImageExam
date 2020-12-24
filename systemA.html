@@ -659,9 +659,11 @@
 		}
 
 		function educationalPlatform() {
-			var svghead = '<svg width="' + sourceImage.width + '" height="' + sourceImage.height + '">\n';
-			var svg = window.btoa(svghead + allAnnotationSVG + '</svg>');
-			//	var xmlStr = formInputsToXML(modalityType, document.URL, UID.trim(), svg, sourceImage.width, sourceImage.height, windowCenter, windowWidth, pixelDataOffset, dcmFile, "");
+
+			//var svghead = '<svg width="' + sourceImage.width + '" height="' + sourceImage.height + '">\n';
+			//var svg = window.btoa(svghead + allAnnotationSVG + '</svg>');
+			//var xmlStr = formInputsToXML(modalityType, document.URL, UID.trim(), svg, sourceImage.width, sourceImage.height, windowCenter, windowWidth, pixelDataOffset, dcmFile, "");
+
 
 			if (DR_ID != undefined) {
 				sessionStorage.setItem("DR_ID", DR_ID);

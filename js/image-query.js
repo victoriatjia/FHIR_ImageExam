@@ -55,7 +55,9 @@ function getPatientList() {
     var tableTarget = document.getElementById("tablelist")
     clearTable(header, tableTarget);
     var pID = document.getElementById("PatientID").value.trim();
+
     if (pID != "") {
+
         getJSON(FHIRrootURL + '/Patient/TCUMI106.' + pID, function (data2) {
             var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
             var row = table.insertRow(-1);
@@ -65,6 +67,7 @@ function getPatientList() {
 
             var rows = table.getElementsByTagName("tr");
             cell1.innerHTML = rows.length;
+
             if (data2.identifier == null) {
                 var id = data2.id.split('.');
                 cell2.innerHTML = id[1];//
@@ -113,6 +116,7 @@ function getPatientList() {
                         }
 
                     });
+
 
 
 
@@ -188,7 +192,9 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
     }
 
     for (var j = first; j < dataAry.length; j++) {
+
         if (dataType != "Study" || dataAry[j].resource.series[0].modality.code != "SR") {
+
             // var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
             // var row = table.insertRow(-1);
             // var cell = row.insertCell(0);
@@ -197,7 +203,9 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
             drawInnertable(dataAry[j], studyID, seriesID, first, dataType);
         } else {
 
+
         }
+
 
     }
 
@@ -249,6 +257,7 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
         instanceNum = data.instance[0].uid;
         description += "StudyUID: " + studyNum + "<br>";
         description += "SeriesUID: " + seriesNum + "<br>";
+
         if (data.number != null);
         description += "Series Number: " + data.number + "<br>";
         if (data.modality != null)
@@ -257,6 +266,7 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
             description += "Body Site: " + data.bodySite.display + "<br>";
         if (data.numberOfInstances != null)
             description += "Number of instances: " + data.numberOfInstances + "<br>";
+
         row.onclick = createClickHandler(row, null);
     }
 
@@ -356,7 +366,9 @@ function populateInstancesList(studyID, seriesID, first, data) {
                     patientStudy_ID = data2.entry[0].resource.subject.reference.split("/");
                     patientStudy_ID = patientStudy_ID[1];
                     ImagingStudy_ID = data2.entry[0].resource.id;
+
                     modality = data2.entry[0].resource.series[0].modality.code;
+
                 });
 
                 var header = ["Type Annotation", "SVG Annotation", "Post Annotation", "Finding Type", "Finding ID"];
