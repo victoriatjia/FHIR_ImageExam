@@ -196,7 +196,7 @@
 		var svgLine, svgRect, svgEllipse, svgText;
 		var svgColor = "black",
 			svgStrokeWidth = 2,
-			svgFontType = "30px Arial";
+			svgFontType = "70px Arial";
 		//end Annotation
 
 		//modal
@@ -609,7 +609,7 @@
 		function showSVG() {
 			var table = document.getElementById("myTable");
 			var svgstr;
-			var svghead = '<svg width="' + sourceImage.width + '" height="' + scaledImage.height + '">\n';
+			var svghead = '<svg width="' + sourceImage.width + '" height="' + sourceImage.height + '">\n';
 			for (var i = lasttext; i < text; i++) {
 				svgstr = '<text x="' + parseInt(svgText[i][0]);
 				svgstr += '" y="' + parseInt(svgText[i][1]);
@@ -659,9 +659,9 @@
 		}
 
 		function educationalPlatform() {
-			var svghead = '<svg width="' + sourceImage.width + '" height="' + scaledImage.height + '">\n';
+			var svghead = '<svg width="' + sourceImage.width + '" height="' + sourceImage.height + '">\n';
 			var svg = window.btoa(svghead + allAnnotationSVG + '</svg>');
-			var xmlStr = formInputsToXML(modalityType, document.URL, UID.trim(), svg, sourceImage.width, sourceImage.height, windowCenter, windowWidth, pixelDataOffset, dcmFile, "");
+			var xmlStr = formInputsToXML(modalityType, document.URL, UID, svg, sourceImage.width, sourceImage.height, windowCenter, windowWidth, pixelDataOffset, dcmFile, "");
 			sessionStorage.setItem("studentAnswer", obsID);
 			window.open("compareAnswer.html", "_blank");
 		}
