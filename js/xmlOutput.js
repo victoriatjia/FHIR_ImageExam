@@ -1,7 +1,7 @@
 var obsID = '';
 var ArrayFID;
 var params = {};
-var patientStudy_ID, ImagingStudy_ID;
+var patientStudy_ID, ImagingStudy_ID, modality;
 
 function formInputsToXML(type, URL, uid, svgBase64, vw, vh, wc, ww, pixelData, dcmFile, annotationType) {
 	var baseURL = "https://www.dicom.org.tw/";
@@ -18,7 +18,7 @@ function formInputsToXML(type, URL, uid, svgBase64, vw, vh, wc, ww, pixelData, d
 	annotationObservation.component[5].valueString = pixelData;
 	annotationObservation.component[6].valueString = dcmFile;
 	output = Object.assign(Observation, annotationObservation);
-	alert(output);
+	//alert(output);
 	postData(output, "Observation", annotationType);
 }
 
@@ -74,32 +74,9 @@ function mammoXML(formID, formCode) {
 
 	var obsTarget_type;
 	if (formID == 'mass') obsTarget_type = massObservation;
-	if (formID == 'calcifications') {
-		// calcificationObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
-		// calcificationObservation.valueCodeableConcept.coding[0].code = p[1];
-		// calcificationObservation.component[0].code.coding[0].code = p[3];
-		// calcificationObservation.component[0].code.coding[1].code = p[5];
-		// calcificationObservation.component[1].code.coding[0].code = p[7];
-		// calcificationObservation.component[2].code.coding[0].code = p[9];
-		// output = Object.assign(Observation, calcificationObservation);
-		obsTarget_type = calcificationObservation;
-	}
-	if (formID == 'asymmetry') {
-		// asymetryObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
-		// asymetryObservation.valueCodeableConcept.coding[0].code = p[1];
-		// asymetryObservation.component[0].code.coding[0].code = p[3];
-		// asymetryObservation.component[0].code.coding[1].code = p[5];
-		// output = Object.assign(Observation, asymetryObservation);
-		obsTarget_type = asymetryObservation;
-	}
-	if (formID == 'architecturalDistortion') {
-		// architecturalDistortionObservation.derivedFrom[0].reference = "Observation/" + params["annotationID"];
-		// architecturalDistortionObservation.valueCodeableConcept.coding[0].code = p[1];
-		// architecturalDistortionObservation.component[0].code.coding[0].code = p[3];
-		// architecturalDistortionObservation.component[0].code.coding[1].code = p[5];
-		// output = Object.assign(Observation, architecturalDistortionObservation);
-		obsTarget_type = architecturalDistortionObservation;
-	}
+	if (formID == 'calcifications') obsTarget_type = calcificationObservation;
+	if (formID == 'asymmetry') obsTarget_type = asymetryObservation;
+	if (formID == 'architecturalDistortion') obsTarget_type = architecturalDistortionObservation;
 	if (formID != 'QuestionCheck') {
 		obsTarget_type.derivedFrom[0].reference = "Observation/" + params["annotationID"];
 		obsTarget_type.valueCodeableConcept.coding[0].code = p[1];
@@ -185,11 +162,6 @@ function diagnosisJSON(findingID) {
 		ref["reference"] = x;
 		DiagnosticReport.result.push(ref);
 	}
-	// var today = new Date();
-	// var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-	// var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-	// var dateTime = date + ' ' + time;
-	// DiagnosticReport.issued = date;
 
 }
 function postData(jsonString, type, formID) {
@@ -206,7 +178,7 @@ function postData(jsonString, type, formID) {
 			// var str = ret.split('<id value="');
 			// var str2 = str[1].split('"/');
 			obsID = ret.id;
-			alert("FHIR Observation ID: " + ret.id);
+			//alert("FHIR Observation ID: " + ret.id);
 
 			if (formID == 'mass') {
 				cmass[cmass[0]] = ret.id;

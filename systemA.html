@@ -73,8 +73,8 @@
 				</li>
 				<li onclick="educationalPlatform()"><img alt="Upload to FHIR" title="Upload to FHIR" id="strokeColor"
 						src="img/educationalTraining.svg" class="imgIcon"></li>
-				<li onclick="createDReport()"><img alt="Create Diagnostic Report" title="Create Diagnostic Report"
-						id="strokeColor" src="img/fileSource.png" class="imgIcon"></li>
+				<li onclick="createDReport()" id="DR_createbutton"><img alt="Create Diagnostic Report"
+						title="Create Diagnostic Report" id="strokeColor" src="img/fileSource.png" class="imgIcon"></li>
 				<div id="textAnnotation" style="display:none; position: absolute; top:400px; z-index: 1;">
 					<font color="white">Text:</font> &nbsp;<input type="text" size="16" id="typeText" class="typeText"
 						onkeypress="return writeText(event)">
@@ -713,25 +713,22 @@
 
 			var dropdownform = document.createElement('select');
 			dropdownform.id = "FormReportType_" + table.rows.length;
-			dropdownform.onchange = function () {
-				OnSelectedIndexChange(this, table, lenrow)
-			};
-			dropdownform.appendChild(option = document.createElement("option"));
-			option.value = "0";
-			option.text = "Finding Type";
-			dropdownform.appendChild(option = document.createElement("option"));
-			option.value = "1";
-			option.text = "Mammo Mass";
-			dropdownform.appendChild(option = document.createElement("option"));
-			option.value = "2";
-			option.text = "Mammo Calcification";
-			dropdownform.appendChild(option = document.createElement("option"));
-			option.value = "3";
-			option.text = "Mammo Architectural Distortion";
-			dropdownform.appendChild(option = document.createElement("option"));
-			option.value = "4";
-			option.text = "Mammo Focal Asymetry";
 
+			var optionText = [];
+			if (modality == "MG") {
+				dropdownform.onchange = function () {
+					OnSelectedIndexChange(this, table, lenrow)
+				};
+				optionText = ["Finding Type", "Mammo Mass", "Mammo Calcification", "Mammo Architectural Distortion", "Mammo Focal Asymetry"]
+			}
+			else {
+				optionText = ["Finding Type", "unvailable findings report"];
+			}
+			for (var i = 0; i < optionText.length; i++) {
+				dropdownform.appendChild(option = document.createElement("option"));
+				option.value = i;
+				option.text = optionText[i];
+			}
 
 			table.appendChild(tr = document.createElement("tr"));
 			tr.appendChild(td = document.createElement("td"));
@@ -784,9 +781,11 @@
 				id = crect[id];
 			else if (annotationType == "ellipse")
 				id = cellipse[id];
-
-			window.open(url + '?annotationID=' + id + '&rowNum=' + rowslength + '&findingType=' + selectedText + '&imagingStudyID=' + ImagingStudy_ID + '&patientStudyID=' + patientStudy_ID, '_blank',
-				'location=yes,height=900,width=900,scrollbars=yes,status=yes,top=0,left=500');
+			if (id == undefined) alert("Please post the annotation first!");
+			else {
+				window.open(url + '?annotationID=' + id + '&rowNum=' + rowslength + '&findingType=' + selectedText + '&imagingStudyID=' + ImagingStudy_ID + '&patientStudyID=' + patientStudy_ID, '_blank',
+					'location=yes,height=900,width=900,scrollbars=yes,status=yes,top=0,left=500');
+			}
 		}
 
 		function HandlePopupResult(result, rowNum, findingType) {
@@ -799,20 +798,23 @@
 		}
 
 		function createDReport() {
-			var table = document.getElementById("myTable");
-			var findingID = [];
-			for (var i = 1; i < table.rows.length; i++) {
-				var findingSTR = document.getElementById("myTable").rows[i].cells[4].innerHTML;
-				if (findingSTR != "") {
-					var paramsStr = findingSTR.split(",");
-					for (j = 0; j < paramsStr.length; j++) {
-						val = paramsStr[j].split("=");
-						findingID.push(val[1]);
+			if (modality == "MG") {
+				var table = document.getElementById("myTable");
+				var findingID = [];
+				for (var i = 1; i < table.rows.length; i++) {
+					var findingSTR = document.getElementById("myTable").rows[i].cells[4].innerHTML;
+					if (findingSTR != "") {
+						var paramsStr = findingSTR.split(",");
+						for (j = 0; j < paramsStr.length; j++) {
+							val = paramsStr[j].split("=");
+							findingID.push(val[1]);
+						}
 					}
 				}
+				sessionStorage.setItem('findingID', findingID);
+				window.open("findingReport/MammoQuestion.html" + '?imagingStudyID=' + ImagingStudy_ID + '&patientStudyID=' + patientStudy_ID, '_blank', 'location=yes,height=900,width=900,scrollbars=yes,status=yes,top=0,left=500');
 			}
-			sessionStorage.setItem('findingID', findingID);
-			window.open("findingReport/MammoQuestion.html" + '?imagingStudyID=' + ImagingStudy_ID + '&patientStudyID=' + patientStudy_ID, '_blank', 'location=yes,height=900,width=900,scrollbars=yes,status=yes,top=0,left=500');
+			else { alert("Diagnostic report unvailable for " + modality + " images!"); }
 		}
 	</script>
 </body>

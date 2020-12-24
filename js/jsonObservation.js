@@ -262,10 +262,10 @@ questionObservation =
 }
 annotationObservation =
 {
-	"identifier": [{
-		"system": "",
-		"value": ""
-	}],
+    "identifier": [{
+        "system": "",
+        "value": ""
+    }],
     "category": [{
         "coding": [{
             "system": "http://hl7.org/fhir/observation-category",
