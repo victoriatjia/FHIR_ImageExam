@@ -179,7 +179,7 @@ function postData(jsonString, type, formID) {
 			// var str = ret.split('<id value="');
 			// var str2 = str[1].split('"/');
 			obsID = ret.id;
-			alert("FHIR Observation ID: " + ret.id);
+			//alert("FHIR Observation ID: " + ret.id);
 
 			if (formID == 'mass') {
 				cmass[cmass[0]] = ret.id;
