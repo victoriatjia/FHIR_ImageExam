@@ -771,11 +771,11 @@
 			else if (selectedText == "Mammo Focal Asymetry")
 				url = "findingReport/MammoFocalAsymetry.html";
 
-			var id = 0;
+			var id = -1;
 			var annotationType = table.rows[rowslength].cells[0].innerHTML;
 			for (var i = 0; i <= rowslength; i++) {
 				if (table.rows[i].cells[0].innerHTML == annotationType)
-					id += i;
+					id += 1;
 			}
 			if (annotationType == "text")
 				id = ctext[id];

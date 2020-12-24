@@ -104,7 +104,6 @@ function showOutput(str) {
 			rect++;
 			svgIndex++;
 		}
-		var xmlText = new XMLSerializer().serializeToString(xmlDoc);
 	}
 	getDCM("B");
 }
@@ -356,15 +355,17 @@ function getFHIRDR(id, type) {
 	xhttp.onreadystatechange = function () {
 		if (this.readyState == 4) {
 			var res = JSON.parse(this.responseText);
-			if (type == "stuAnswer") { DRObservation = res; displayDR(); }//showOutput2(this.responseText);
-			else showTeacherAnswer(this.responseText);
+			if (type == "stuAnswer") { DRObservation = res; displayDR(type); }//showOutput2(this.responseText);
+			else { DRObservation = res; displayDR(type); }//showTeacherAnswer(this.responseText);
 		}
 	};
 	xhttp.send();
 }
-function displayDR() {
+function displayDR(type) {
 	//clearDiv(document.getElementById("findingBox"));
-	var contactBox = document.getElementById("contactBox");
+
+	var contactBox = (type == "stuAnswer") ? document.getElementById("contactBox") : document.getElementById("contactBox2");
+
 	clearDiv(contactBox);
 
 	var singlePatient = (DRObservation.entry == undefined) ? DRObservation : DRObservation.entry[id - 1].resource;
@@ -374,7 +375,7 @@ function displayDR() {
 	table.style.borderCollapse = "collapse";
 	table.style.borderBottom = 1;
 	table.style.borderBottomColor = "black";
-	table.style.width = "100%";
+	table.style.width = "130";
 	table.style.backgroundColor = "white";
 	table.style.fontSize = "18px";
 
@@ -463,9 +464,9 @@ function displayDR() {
 	table.appendChild(row2);
 
 	var ResultValue = "";
-	for (var i = 0; i < singlePatient.result.length; i++) {
+	for (var i = 0; i < singlePatient.result.length; i++) { //DRObservation.result.length
 		strUrl = fhir.url + singlePatient.result[i].reference;
-		getJSON(strUrl, 0, "Finding", table);
+		getJSON(strUrl, 0, "Finding", table, "DR", type);
 	}
 }
 function showTeacherAnswer(str) {
@@ -544,7 +545,6 @@ function showTeacherAnswer(str) {
 		svgRect2[rect2][5] = strokeWidth;
 		rect2++;
 	}
-	var xmlText = new XMLSerializer().serializeToString(xmlDoc);
 	redrawAnnotation(ctx2, 2);
 }
 
@@ -553,96 +553,188 @@ function showOutput2(str) {
 	//alert(jsonOBJ);
 	if (jsonOBJ.total == 0) alert('data unexist');
 	else {
-		samplesPerPixel = 1;
-		storedBytes = 2;
-		modalityType = jsonOBJ.code.coding[0].code;
-		UID = jsonOBJ.identifier[0].value;
-		sourceImage.width = parseInt(jsonOBJ.component[1].valueString);
-		sourceImage.height = parseInt(jsonOBJ.component[2].valueString);
-		windowCenter = parseInt(jsonOBJ.component[3].valueString);
-		windowWidth = parseInt(jsonOBJ.component[4].valueString);
-		pixelDataOffset = parseInt(jsonOBJ.component[5].valueString);
-		dcmFile = jsonOBJ.component[6].valueString;
-		var base64 = jsonOBJ.component[0].valueString;
-		var svg = atob(base64);
-		var wait = 0;
-		while (svg == undefined) {
-			wait++;
+		if (modalityType == undefined) {
+			samplesPerPixel = 1;
+			storedBytes = 2;
+			modalityType = jsonOBJ.code.coding[0].code;
+			UID = jsonOBJ.identifier[0].value;
+			sourceImage.width = parseInt(jsonOBJ.component[1].valueString);
+			sourceImage.height = parseInt(jsonOBJ.component[2].valueString);
+			windowCenter = parseInt(jsonOBJ.component[3].valueString);
+			windowWidth = parseInt(jsonOBJ.component[4].valueString);
+			pixelDataOffset = parseInt(jsonOBJ.component[5].valueString);
+			dcmFile = jsonOBJ.component[6].valueString;
+
+			var base64 = jsonOBJ.component[0].valueString;
+			getDCM(base64);
+			//getDCM();
 		}
-		var parser = new DOMParser();
-		var xmlDoc = parser.parseFromString(svg, "text/xml");
-
-		for (var i = 0; i < xmlDoc.getElementsByTagName("text").length; i++) {
-			var type = xmlDoc.getElementsByTagName("text")[i];
-			var x = type.getAttribute('x');
-			var y = type.getAttribute('y');
-			var val = type.childNodes[0].nodeValue;
-			var fontColor = type.getAttribute('fill');
-			var fontSize = type.getAttribute('font-size');
-
-			svgText1[text1][0] = parseInt(x);
-			svgText1[text1][1] = parseInt(y);
-			svgText1[text1][2] = val;
-			svgText1[text1][3] = fontColor;
-			svgText1[text1][4] = fontSize + "px Arial";
-			text1++;
+		else {
+			drawAnnotation(jsonOBJ.component[0].valueString);
 		}
 
-		for (var i = 0; i < xmlDoc.getElementsByTagName("line").length; i++) {
-			var type = xmlDoc.getElementsByTagName("line")[i];
-			var x1 = type.getAttribute('x1');
-			var y1 = type.getAttribute('y1');
-			var x2 = type.getAttribute('x2');
-			var y2 = type.getAttribute('y2');
-			var strokeColor = type.getAttribute('stroke');
-			var strokeWidth = parseInt(type.getAttribute('stroke-width'));
+		// var wait = 0;
+		// while (panX == undefined) {
+		// 	wait++;
+		// }
+		//var base64 = jsonOBJ.component[0].valueString;
 
-			svgLine1[line1][0] = parseInt(x1);
-			svgLine1[line1][1] = parseInt(y1);
-			svgLine1[line1][2] = parseInt(x2);
-			svgLine1[line1][3] = parseInt(y2);
-			svgLine1[line1][4] = strokeColor;
-			svgLine1[line1][5] = parseInt(strokeWidth);
-			line1++;
-		}
+		// var svg = atob(base64);
+		// // while (svg == undefined) {
+		// // 	wait++;
+		// // }
+		// var parser = new DOMParser();
+		// var xmlDoc = parser.parseFromString(svg, "text/xml");
 
-		for (var i = 0; i < xmlDoc.getElementsByTagName("ellipse").length; i++) {
-			var type = xmlDoc.getElementsByTagName("ellipse")[i];
-			var cx = type.getAttribute('cx');
-			var cy = type.getAttribute('cy');
-			var rx = type.getAttribute('rx');
-			var ry = type.getAttribute('ry');
-			var strokeColor = type.getAttribute('stroke');
-			var strokeWidth = parseInt(type.getAttribute('stroke-width'));
+		// for (var i = 0; i < xmlDoc.getElementsByTagName("text").length; i++) {
+		// 	var type = xmlDoc.getElementsByTagName("text")[i];
+		// 	var x = type.getAttribute('x');
+		// 	var y = type.getAttribute('y');
+		// 	var val = type.childNodes[0].nodeValue;
+		// 	var fontColor = type.getAttribute('fill');
+		// 	var fontSize = type.getAttribute('font-size');
 
-			svgEllipse1[ellipse1][0] = parseInt(cx);
-			svgEllipse1[ellipse1][1] = parseInt(cy);
-			svgEllipse1[ellipse1][2] = parseInt(rx);
-			svgEllipse1[ellipse1][3] = parseInt(ry);
-			svgEllipse1[ellipse1][4] = strokeColor;
-			svgEllipse1[ellipse1][5] = strokeWidth;
-			ellipse1++;
-		}
+		// 	svgText1[text1][0] = parseInt(x);
+		// 	svgText1[text1][1] = parseInt(y);
+		// 	svgText1[text1][2] = val;
+		// 	svgText1[text1][3] = fontColor;
+		// 	svgText1[text1][4] = fontSize + "px Arial";
+		// 	text1++;
+		// }
 
-		for (var i = 0; i < xmlDoc.getElementsByTagName("rect").length; i++) {
-			var type = xmlDoc.getElementsByTagName("rect")[i];
-			var x = parseInt(type.getAttribute('x'));
-			var y = parseInt(type.getAttribute('y'));
-			var w = parseInt(type.getAttribute('width'));
-			var h = parseInt(type.getAttribute('height'));
-			var strokeColor = type.getAttribute('stroke');
-			var strokeWidth = parseInt(type.getAttribute('stroke-width'));
+		// for (var i = 0; i < xmlDoc.getElementsByTagName("line").length; i++) {
+		// 	var type = xmlDoc.getElementsByTagName("line")[i];
+		// 	var x1 = type.getAttribute('x1');
+		// 	var y1 = type.getAttribute('y1');
+		// 	var x2 = type.getAttribute('x2');
+		// 	var y2 = type.getAttribute('y2');
+		// 	var strokeColor = type.getAttribute('stroke');
+		// 	var strokeWidth = parseInt(type.getAttribute('stroke-width'));
 
-			svgRect1[rect1][0] = x;
-			svgRect1[rect1][1] = y;
-			svgRect1[rect1][2] = x + w;
-			svgRect1[rect1][3] = y + h;
-			svgRect1[rect1][4] = strokeColor;
-			svgRect1[rect1][5] = strokeWidth;
-			rect1++;
-		}
-		var xmlText = new XMLSerializer().serializeToString(xmlDoc);
+		// 	svgLine1[line1][0] = parseInt(x1);
+		// 	svgLine1[line1][1] = parseInt(y1);
+		// 	svgLine1[line1][2] = parseInt(x2);
+		// 	svgLine1[line1][3] = parseInt(y2);
+		// 	svgLine1[line1][4] = strokeColor;
+		// 	svgLine1[line1][5] = parseInt(strokeWidth);
+		// 	line1++;
+		// }
+
+		// for (var i = 0; i < xmlDoc.getElementsByTagName("ellipse").length; i++) {
+		// 	var type = xmlDoc.getElementsByTagName("ellipse")[i];
+		// 	var cx = type.getAttribute('cx');
+		// 	var cy = type.getAttribute('cy');
+		// 	var rx = type.getAttribute('rx');
+		// 	var ry = type.getAttribute('ry');
+		// 	var strokeColor = type.getAttribute('stroke');
+		// 	var strokeWidth = parseInt(type.getAttribute('stroke-width'));
+
+		// 	svgEllipse1[ellipse1][0] = parseInt(cx);
+		// 	svgEllipse1[ellipse1][1] = parseInt(cy);
+		// 	svgEllipse1[ellipse1][2] = parseInt(rx);
+		// 	svgEllipse1[ellipse1][3] = parseInt(ry);
+		// 	svgEllipse1[ellipse1][4] = strokeColor;
+		// 	svgEllipse1[ellipse1][5] = strokeWidth;
+		// 	ellipse1++;
+		// }
+
+		// for (var i = 0; i < xmlDoc.getElementsByTagName("rect").length; i++) {
+		// 	var type = xmlDoc.getElementsByTagName("rect")[i];
+		// 	var x = parseInt(type.getAttribute('x'));
+		// 	var y = parseInt(type.getAttribute('y'));
+		// 	var w = parseInt(type.getAttribute('width'));
+		// 	var h = parseInt(type.getAttribute('height'));
+		// 	var strokeColor = type.getAttribute('stroke');
+		// 	var strokeWidth = parseInt(type.getAttribute('stroke-width'));
+
+		// 	svgRect1[rect1][0] = x;
+		// 	svgRect1[rect1][1] = y;
+		// 	svgRect1[rect1][2] = x + w;
+		// 	svgRect1[rect1][3] = y + h;
+		// 	svgRect1[rect1][4] = strokeColor;
+		// 	svgRect1[rect1][5] = strokeWidth;
+		// 	rect1++;
+		// }
+		// redrawAnnotation(ctx, 1);
 	}
-	getDCM();
+}
+function drawAnnotation(base64) {
+	var svg = atob(base64);
+	// while (svg == undefined) {
+	// 	wait++;
+	// }
+	var parser = new DOMParser();
+	var xmlDoc = parser.parseFromString(svg, "text/xml");
+
+	for (var i = 0; i < xmlDoc.getElementsByTagName("text").length; i++) {
+		var type = xmlDoc.getElementsByTagName("text")[i];
+		var x = type.getAttribute('x');
+		var y = type.getAttribute('y');
+		var val = type.childNodes[0].nodeValue;
+		var fontColor = type.getAttribute('fill');
+		var fontSize = type.getAttribute('font-size');
+
+		svgText1[text1][0] = parseInt(x);
+		svgText1[text1][1] = parseInt(y);
+		svgText1[text1][2] = val;
+		svgText1[text1][3] = fontColor;
+		svgText1[text1][4] = fontSize + "px Arial";
+		text1++;
+	}
+
+	for (var i = 0; i < xmlDoc.getElementsByTagName("line").length; i++) {
+		var type = xmlDoc.getElementsByTagName("line")[i];
+		var x1 = type.getAttribute('x1');
+		var y1 = type.getAttribute('y1');
+		var x2 = type.getAttribute('x2');
+		var y2 = type.getAttribute('y2');
+		var strokeColor = type.getAttribute('stroke');
+		var strokeWidth = parseInt(type.getAttribute('stroke-width'));
+
+		svgLine1[line1][0] = parseInt(x1);
+		svgLine1[line1][1] = parseInt(y1);
+		svgLine1[line1][2] = parseInt(x2);
+		svgLine1[line1][3] = parseInt(y2);
+		svgLine1[line1][4] = strokeColor;
+		svgLine1[line1][5] = parseInt(strokeWidth);
+		line1++;
+	}
+
+	for (var i = 0; i < xmlDoc.getElementsByTagName("ellipse").length; i++) {
+		var type = xmlDoc.getElementsByTagName("ellipse")[i];
+		var cx = type.getAttribute('cx');
+		var cy = type.getAttribute('cy');
+		var rx = type.getAttribute('rx');
+		var ry = type.getAttribute('ry');
+		var strokeColor = type.getAttribute('stroke');
+		var strokeWidth = parseInt(type.getAttribute('stroke-width'));
+
+		svgEllipse1[ellipse1][0] = parseInt(cx);
+		svgEllipse1[ellipse1][1] = parseInt(cy);
+		svgEllipse1[ellipse1][2] = parseInt(rx);
+		svgEllipse1[ellipse1][3] = parseInt(ry);
+		svgEllipse1[ellipse1][4] = strokeColor;
+		svgEllipse1[ellipse1][5] = strokeWidth;
+		ellipse1++;
+	}
+
+	for (var i = 0; i < xmlDoc.getElementsByTagName("rect").length; i++) {
+		var type = xmlDoc.getElementsByTagName("rect")[i];
+		var x = parseInt(type.getAttribute('x'));
+		var y = parseInt(type.getAttribute('y'));
+		var w = parseInt(type.getAttribute('width'));
+		var h = parseInt(type.getAttribute('height'));
+		var strokeColor = type.getAttribute('stroke');
+		var strokeWidth = parseInt(type.getAttribute('stroke-width'));
+
+		svgRect1[rect1][0] = x;
+		svgRect1[rect1][1] = y;
+		svgRect1[rect1][2] = x + w;
+		svgRect1[rect1][3] = y + h;
+		svgRect1[rect1][4] = strokeColor;
+		svgRect1[rect1][5] = strokeWidth;
+		rect1++;
+	}
+	redrawAnnotation(ctx, 1);
 }
 //End compareAnswer used function
