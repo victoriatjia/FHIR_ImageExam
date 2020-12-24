@@ -28,6 +28,10 @@
 			align-items: center;
 		}
 
+		.contactBox .contactBox2 {
+			vertical-align: top;
+		}
+
 		.Header .Title {
 			float: left;
 			width: 100px;
@@ -198,6 +202,7 @@
 							for (var i = 0; i < instancesUID.length; i++) {
 								if (UID == instancesUID[i]) {
 									Annotationcount = 0;
+									findingCount = 0;
 									DrawdcmAnnotationID = [];
 									getFHIRDR(answerID[i], 'tchrAnswer');
 									//getFHIREdu(answerID[i], 'tchrAnswer');

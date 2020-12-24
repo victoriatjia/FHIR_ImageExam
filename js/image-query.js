@@ -55,7 +55,9 @@ function getPatientList() {
     var tableTarget = document.getElementById("tablelist")
     clearTable(header, tableTarget);
     var pID = document.getElementById("PatientID").value.trim();
-    if(pID!="" ){
+
+    if (pID != "") {
+
         getJSON(FHIRrootURL + '/Patient/TCUMI106.' + pID, function (data2) {
             var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
             var row = table.insertRow(-1);
@@ -65,21 +67,21 @@ function getPatientList() {
 
             var rows = table.getElementsByTagName("tr");
             cell1.innerHTML = rows.length;
-            if(data2.identifier==null)
-            {
+
+            if (data2.identifier == null) {
                 var id = data2.id.split('.');
                 cell2.innerHTML = id[1];//
             }
-            else{
+            else {
                 cell2.innerHTML = data2.identifier[0].value;//data2.id;//
             }
-            if(data2.name==null){
+            if (data2.name == null) {
                 var id = data2.id.split('.');
                 cell3.innerHTML = id[1];//
-            }else {
+            } else {
                 cell3.innerHTML = data2.name[0].text;
             }
-            
+
         });
 
     }
@@ -91,33 +93,33 @@ function getPatientList() {
                     var patientID = "TCUMI106." + orthancPatient.MainDicomTags.PatientID;
                     var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
                     getJSON(FHIRrootURL + '/Patient/' + patientID, function (data2) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
-    
+
                         var row = table.insertRow(-1);
                         var cell1 = row.insertCell(0);
                         var cell2 = row.insertCell(1);
                         var cell3 = row.insertCell(2);
-    
+
                         var rows = table.getElementsByTagName("tr");
                         cell1.innerHTML = rows.length;
-                        if(data2.identifier==null)
-                        {
+                        if (data2.identifier == null) {
                             var id = data2.id.split('.');
                             cell2.innerHTML = id[1];//
                         }
-                        else{
+                        else {
                             cell2.innerHTML = data2.identifier[0].value;//data2.id;//
                         }
-                        if(data2.name==null){
+                        if (data2.name == null) {
                             var id = data2.id.split('.');
                             cell3.innerHTML = id[1];//
-                        }else {
+                        } else {
                             cell3.innerHTML = data2.name[0].text;
                         }
-                        
+
                     });
-    
-    
-    
+
+
+
+
                 });
             }
         });
@@ -190,7 +192,9 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
     }
 
     for (var j = first; j < dataAry.length; j++) {
-        if(dataType != "Study" || dataAry[j].resource.series[0].modality.code !="SR"){
+
+        if (dataType != "Study" || dataAry[j].resource.series[0].modality.code != "SR") {
+
             // var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
             // var row = table.insertRow(-1);
             // var cell = row.insertCell(0);
@@ -198,9 +202,11 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
             // cell.innerHTML="Not an Image"
             drawInnertable(dataAry[j], studyID, seriesID, first, dataType);
         } else {
-            
+
+
         }
-        
+
+
     }
 
 }
@@ -251,14 +257,16 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
         instanceNum = data.instance[0].uid;
         description += "StudyUID: " + studyNum + "<br>";
         description += "SeriesUID: " + seriesNum + "<br>";
-        if(data.number!=null);
+
+        if (data.number != null);
         description += "Series Number: " + data.number + "<br>";
-        if(data.modality!=null)
-        description += "Modality: " + data.modality.code + "<br>";
-        if(data.bodySite!=null)
-        description += "Body Site: " + data.bodySite.display + "<br>";
-        if(data.numberOfInstances!=null)
-        description += "Number of instances: " + data.numberOfInstances + "<br>";
+        if (data.modality != null)
+            description += "Modality: " + data.modality.code + "<br>";
+        if (data.bodySite != null)
+            description += "Body Site: " + data.bodySite.display + "<br>";
+        if (data.numberOfInstances != null)
+            description += "Number of instances: " + data.numberOfInstances + "<br>";
+
         row.onclick = createClickHandler(row, null);
     }
 
@@ -358,6 +366,9 @@ function populateInstancesList(studyID, seriesID, first, data) {
                     patientStudy_ID = data2.entry[0].resource.subject.reference.split("/");
                     patientStudy_ID = patientStudy_ID[1];
                     ImagingStudy_ID = data2.entry[0].resource.id;
+
+                    modality = data2.entry[0].resource.series[0].modality.code;
+
                 });
 
                 var header = ["Type Annotation", "SVG Annotation", "Post Annotation", "Finding Type", "Finding ID"];
