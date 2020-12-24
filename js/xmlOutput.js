@@ -2,7 +2,7 @@ var obsID = '';
 var ArrayFID;
 var params = {};
 var patientStudy_ID, ImagingStudy_ID, DRObservation, modality, DR_ID;
-var DrawdcmAnnotationID, Annotationcount = 0;
+
 
 function formInputsToXML(type, URL, uid, svgBase64, vw, vh, wc, ww, pixelData, dcmFile, annotationType) {
 	var baseURL = "https://www.dicom.org.tw/";
