@@ -1,0 +1,829 @@
+<html>
+	<head>
+		<script src="js/xmlOutput.js"></script>
+		<script src="js/getFHIR.js"></script>
+		<script src="js/jsonObservation.js"></script>
+		<script src="js/image-query.js"></script>
+		<script src="js/settings.js"></script>
+		<link rel="stylesheet" href="css/style3.css" />
+	</head>
+<body>
+	<div class="row">
+		<div class="column" style="background-color:#202020; width: 11%;">
+			<ul id="nav">
+				<!-- <li><img alt="Window Level" title="Window Level" id="windowLevel" src="img/windowLevel.png" -->
+						<!-- class="imgIcon"> -->
+					<!-- <ul class="ddl1" style="width: 100px; height: 48px;"> -->
+						<!-- <li onclick="windowLW()" class="fontSize">Adjust</li> -->
+						<!-- <li onclick="showRecord()" class="fontSize">Insert Value</li> -->
+					<!-- </ul> -->
+				<!-- </li> -->
+				<li><img alt="Annotation" title="Annotation" id="annotation" class="imgIcon" src="img/annotation.png">
+					<ul class="ddl2" style="width: 100px; height: 96px;">
+						<li onclick="Text()" class="fontSize">Text</li>
+						<li onclick="Line()" class="fontSize">Line</li>
+						<li onclick="Rect()" class="fontSize">Rectangle</li>
+						<li onclick="Ellipse()" class="fontSize">Ellipse</li>
+					</ul>
+				</li>
+				<li><img alt="Stroke Width" title="Stroke Width" id="strokeWidth" src="img/strokeWidth.png"
+						class="imgIcon">
+					<ul class="ddl3" style="width: 100px; height: 240px;">
+						<li value="1" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel1.png" /></li>
+						<li value="2" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel2.png" /></li>
+						<li value="3" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel3.png" /></li>
+						<li value="4" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel4.png" /></li>
+						<li value="5" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel5.png" /></li>
+						<li value="6" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel6.png" /></li>
+						<li value="7" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel7.png" /></li>
+						<li value="8" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel8.png" /></li>
+						<li value="9" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel9.png" /></li>
+						<li value="10" onclick="strokeWidth(value)"><img class="strokeWidthImg"
+								src="img/strokeLevel10.png" /></li>
+					</ul>
+				</li>
+				<li><img alt="Stroke Color" title="Stroke Color" id="strokeColor" src="img/strokeColor.png"
+						class="imgIcon">
+					<ul class="ddl4" style="width: 100px;">
+						<li style="height: 40px;"><input type="color" onchange="strokeColor(this.value)" value="#000000"
+								style="width:85px; display: block; margin:8px 4px;"></li>
+					</ul>
+				</li>
+				<!-- <li><img alt="Zoom Slider" title="Zoom" src="img/zoom.png" class="imgIcon"> -->
+					<!-- <ul class="ddl5" style="width: 100px;"> -->
+						<!-- <li onclick="zoom(0)" class="fontSize">Fill Viewport</li> -->
+						<!-- <li onclick="zoom(1)" class="fontSize">1x</li> -->
+						<!-- <li onclick="zoom(2)" class="fontSize">2x</li> -->
+						<!-- <li onclick="zoom(4)" class="fontSize">4x</li> -->
+						<!-- <li onclick="zoom(8)" class="fontSize">8x</li> -->
+					<!-- </ul> -->
+				<!-- </li> -->
+				<!-- <li onclick="Pan()"><img alt="Panning" title="Pan" id="fileSource" src="img/pan.png" class="imgIcon"> -->
+				<!-- </li> -->
+				<!-- <li onclick="educationalPlatform()"><img alt="Upload to FHIR" title="Upload to FHIR" id="strokeColor" -->
+						<!-- src="img/educationalTraining.svg" class="imgIcon"> -->
+				<!-- </li> -->
+				<!-- <li onclick="createDReport()" id="DR_createbutton"><img alt="Create Diagnostic Report" -->
+						<!-- title="Create Diagnostic Report" id="strokeColor" src="img/fileSource.png" class="imgIcon"> -->
+				<!-- </li> -->
+				<div id="textAnnotation" style="display:none; position: absolute; top:400px; z-index: 1;">
+					<font color="white">Text:</font> &nbsp;<input type="text" size="16" id="typeText" class="typeText"
+						onkeypress="return writeText(event)">
+				</div>
+			</ul>
+		</div>
+
+		<div class="column" style="background-color:#202020; width: 59.5%;">
+			<div id="allcanvas">
+				<canvas id="myCanvas"></canvas>
+				<canvas id="drawCanvas"></canvas>
+				<div id="ratioInfo" class="overlay" style="position:absolute;bottom:1%;left:1%; color: white;"></div>
+				<div id="windowLevelInfo" class="overlay" style="position:absolute;bottom:1%;right:1%; color: white;">
+				</div>
+			</div>
+		</div>
+
+		<div class="column" style="background-color:#202020; width: 29.5%;">
+			<ul id="instancesList" style="position: absolute; right:10px; list-style-type: none;"></ul>
+		</div>
+	</div>
+
+	<table id="myTable" style="color:white">
+		<thead>
+			<tr style="background-color:white; font-weight:bold; color: black;">
+				<th>Type Annotation</th>
+				<th>SVG Annotation</th>
+				<th>Post Annotation</th>
+				<th>Finding Type</th>
+				<th>Finding ID</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+
+	<div id="myModal" class="modal">
+		<div id="modal-content" class="modal-content"></div>
+	</div>
+
+	<script>
+		//canvas
+		var canvas = document.getElementById("myCanvas"),
+			ctx = canvas.getContext("2d");
+		var drawCanvas = document.getElementById("drawCanvas"),
+			drawCtx = drawCanvas.getContext("2d");
+		//end canvas
+
+		//windowLW
+		var windowCenter, windowWidth, maxPixelValue, minPixelValue;
+		var adjusting = false, panning = false;
+		//end windowLW
+
+		//image source file path
+		var dcmFile;
+		var dcmFileArray = new Array(9);
+		dcmFileArray = ["https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/MR2S1IM9.dcm",
+			"https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/mammo1.dcm",
+			"https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/CT_A.dcm",
+			"https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/chest01.dcm",
+			"https://orthanc.dicom.tw/wado/?requestType=WADO&studyUID=1.3.6.1.4.1.14519.5.2.1.9999.103.2445110399502685110179049624125&seriesUID=1.3.6.1.4.1.14519.5.2.1.9999.103.2226892066207840840424092100047&objectUID=1.2.276.0.7230010.3.1.4.2437395334.5140.1597491138.380&contentType=application/dicom"
+		];
+
+		//session
+		var studyID = sessionStorage.getItem('studyUID');
+		var seriesID = sessionStorage.getItem('seriesUID');
+		var dicomURL = 0;//sessionStorage.getItem('index');		//Ambil File DCM dari array dcmFileArray index ke 0
+		var query = location.search.substring(1);
+		if (query != "") {	//get FHIR Observation id from GET Method
+			var param = query.split(/=/);
+			getFHIR(param[1]);
+		}
+		else {
+			if (studyID == null && seriesID == null) {
+				initialization();
+				dcmFile = dcmFileArray[dicomURL];
+				getDCM("A");
+			} else {
+				var url = DICOMrootURL + '/dicom-web/studies/' + studyID + '/series/' + seriesID + '/instances/';
+				getJSON(url, function (data) {
+					dcmFiles = populateInstancesList(studyID, seriesID, 0, data);
+					initialization();
+				});
+			}
+		}
+		// end of session
+		//end image source file path
+
+		//Display image to canvas
+		var canvasWidth = 900, canvasHeight = 600;
+		document.getElementById("allcanvas").style.width = canvasWidth;
+		document.getElementById("allcanvas").style.height = canvasHeight;
+		var sourceImage = {
+			width: 0,
+			height: 0
+		}
+		var scaledImage = {
+			width: 0,
+			height: 0,
+			prevWidth: 0,
+			prevHeight: 0
+		}
+		var scaleRatio;	//scaledImage.width/ sourceImage.width
+		var fitCanvasRatio;
+		var PanX, PanY;
+		var pixelDataOffset, modalityType, UID;
+		var storedBytes, samplesPerPixel; //data dicom, samplesPerPixel 1 =b&w
+		//end Display image to canvas
+
+		//Annotation
+		var paintLine = false,
+			paintRect = false,
+			paintPolygon = false,
+			paintEllipse = false,
+			typeText = false;
+		var x1, y1, x2, y2;
+		var allAnnotationSVG = "";
+		var line, rect, ellipse, polygon, text;
+		var svgLine, svgRect, svgEllipse, svgText;
+		var svgColor = "black",
+			svgStrokeWidth = 2,
+			svgFontType = "70px Arial";
+		//end Annotation
+
+		//modal
+		var modal = document.getElementById("myModal");
+		//end modal
+
+		function initialization() {
+			line = 0, rect = 0, ellipse = 0, polygon = 0, text = 0;
+			svgLine = new Array(10);				//line
+			for (var i = 0; i < 10; i++) {
+				svgLine[i] = new Array(4);
+			}
+
+			svgRect = new Array(10);				//rect
+			for (var i = 0; i < 10; i++) {
+				svgRect[i] = new Array(6);
+			}
+
+			svgEllipse = new Array(10);				//ellipse
+			for (var i = 0; i < 10; i++) {
+				svgEllipse[i] = new Array(6);
+			}
+
+			svgText = new Array(15);				//text
+			for (var i = 0; i < 15; i++) {
+				svgText[i] = new Array(6);
+			}
+			document.getElementById("allcanvas").addEventListener("wheel", scrollZoom);
+		}
+
+		function getDCM(system) {
+			if (system == "A") initialization();
+			var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', dcmFile, true);
+			xhttp.responseType = "arraybuffer"; //arraybuffer=binary file
+			xhttp.onreadystatechange = function () {
+				if (xhttp.readyState == 4) {
+					dicomData = new DataView(xhttp.response);
+					if (system == "A") findMetaData(xhttp.response);
+					findMinMaxPixelValue();
+					if (windowWidth == null || isNaN(windowWidth)) {			//if window level isn't defined in the DICOM source file
+						windowWidth = (maxPixelValue - minPixelValue) + 1;
+						windowCenter = Math.floor(windowWidth / 2);
+					}
+					setDefaultMode()
+					generateLUT();
+					zoom(0);
+				}
+			}
+			xhttp.send();
+		}
+
+		function setDefaultMode() {
+			scaledImage.width = sourceImage.width;
+			scaledImage.height = sourceImage.height;
+			PanX = 0, PanY = 0;
+			if (scaledImage.height > canvasHeight || scaledImage.width > canvasWidth) {
+				let scale1 = canvasWidth / sourceImage.width;
+				let scale2 = canvasHeight / sourceImage.height;
+				let scale = Math.min(scale1, scale2);
+
+				scaledImage.height *= scale;
+				scaledImage.width *= scale;
+			}
+			fitCanvasRatio = scaledImage.width / sourceImage.width;
+			scaledImage.prevWidth = canvasWidth;
+			scaledImage.prevHeight = canvasHeight;
+		}
+
+		function setPixel() {
+			document.getElementById("windowLevelInfo").innerHTML = "WW/ WC: " + windowWidth + "/ " + windowCenter;
+			canvas.width = canvasWidth;
+			canvas.height = canvasHeight;
+			drawCanvas.width = canvasWidth;
+			drawCanvas.height = canvasHeight;
+			storedPixelValueToCanvas(ctx, scaledImage.width, scaledImage.height, PanX, PanY);
+			redrawAnnotation();
+		}
+
+		//zoom in and out slider
+		function scrollZoom(e) {
+			if (e.wheelDelta < 0 || e.detail > 0) {
+				var temp = scaleRatio - 0.1;
+				if (temp < 0.1) scaleRatio = 0.1;
+				else scaleRatio = temp;
+			}
+			else scaleRatio = scaleRatio + 0.1;
+
+			zoom(scaleRatio);
+			return false; // Prevent page from scrolling
+		}
+
+		function zoom(scale) {
+			if (scale == 0) scale = fitCanvasRatio;
+
+			scaleRatio = scale; //scaledImage.width/ sourceImage.width; 
+			scaledImage.width = Math.round(sourceImage.width * scale);
+			scaledImage.height = Math.round(sourceImage.height * scale);
+			PanX += (scaledImage.prevWidth - scaledImage.width) * (((canvasWidth / 2) - PanX) / scaledImage.prevWidth);
+			PanY += (scaledImage.prevHeight - scaledImage.height) * (((canvasHeight / 2) - PanY) / scaledImage.prevHeight);
+			scaledImage.prevWidth = scaledImage.width;
+			scaledImage.prevHeight = scaledImage.height;
+			setPixel();
+			document.getElementById("ratioInfo").innerHTML = "Ratio: " + Math.round(scale * 100) / 100;
+		}
+		//END zoom in and out slider
+
+		//Panning
+		var xx, yy;
+		function Pan() {
+			drawCanvas.onmousedown = function (e) {
+				panning = true;
+				xx = e.pageX - document.getElementById("allcanvas").offsetLeft;
+				yy = e.pageY - document.getElementById("allcanvas").offsetTop;
+			}
+
+			drawCanvas.onmousemove = function (e) {
+				if (panning) {
+					var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
+						y2 = e.pageY - document.getElementById("allcanvas").offsetTop;
+					panningFunc(x2, y2);
+				}
+			}
+
+			drawCanvas.onmouseup = function (e) {
+				if (panning) {
+					var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
+						y2 = e.pageY - document.getElementById("allcanvas").offsetTop;
+					panningFunc(x2, y2);
+					panning = false;
+				}
+			}
+		}
+
+		function panningFunc(xCoor, yCoor) {
+			var valuesX = xx - xCoor; //drag from left to right (x1< x2), sx will be minus value, krn makin ke kiri 
+			var valuesY = yy - yCoor;
+			PanX -= valuesX;
+			PanY -= valuesY;
+			setPixel();
+			redrawAnnotation();
+		}
+		//End of Panning
+
+		//Window level adjustment
+		function windowLW() {
+			var nextCenter = windowCenter;
+			var nextWidth = windowWidth;
+
+			drawCanvas.onmousedown = function (e) {
+				adjusting = true;
+				x1 = e.clientX;
+				y1 = e.clientY;
+			}
+
+			drawCanvas.onmousemove = function (e) {
+				if (adjusting == true) {
+					var x = e.clientX;
+					var y = e.clientY;
+					nextCenter = parseInt(windowCenter) + x - x1;
+					nextWidth = parseInt(windowWidth) + y - y1;
+					document.getElementById("wcenter").value = nextCenter;
+					document.getElementById("wwidth").value = nextWidth;
+					setPixel();
+					redrawAnnotation();
+				}
+			}
+
+			drawCanvas.onmouseup = function (e) {
+				if (adjusting == true) {
+					adjusting = false;
+					windowCenter = nextCenter;
+					windowWidth = nextWidth;
+					generateLUT();
+					setPixel();
+				}
+			}
+		}
+
+		function windowLevelByVal() {
+			windowWidth = parseInt(document.getElementById("wwidth").value);
+			windowCenter = parseInt(document.getElementById("wcenter").value);
+			generateLUT();
+			setPixel();
+		}
+		//End Window level adjustment
+
+		// < !--Annotation -->
+		function strokeColor(color) {
+			svgColor = color;
+			ctx.strokeStyle = color;
+			drawCtx.strokeStyle = color;
+			ctx.fillStyle = color;
+		}
+
+		function strokeWidth(width) {
+			svgStrokeWidth = width;
+			ctx.lineWidth = width;
+			drawCtx.lineWidth = width;
+		}
+
+		function Text() {
+			drawCanvas.onmousedown = function (e) {
+				typeText = true;
+				x1 = e.pageX - document.getElementById("allcanvas").offsetLeft; //e=mouse cursor, this=canvas original x,
+				y1 = e.pageY - document.getElementById("allcanvas").offsetTop;
+				document.getElementById("typeText").value = "";
+				showField("textAnnotation");
+			}
+		}
+
+		function writeText(event) {
+			if (event.which == 13 || event.keyCode == 13) { //13 means "enter"
+				var val = document.getElementById("typeText").value;
+				var fontType = svgFontType;
+				var font = parseInt(fontType.substr(0, 2)) * scaleRatio;
+				fontType = font + fontType.substr(2);
+				drawText(x1, y1, val, svgColor, fontType)
+
+				svgText[text][0] = (x1 - PanX) / scaleRatio;
+				svgText[text][1] = (y1 - PanY) / scaleRatio;
+				svgText[text][2] = val;
+				svgText[text][3] = svgColor;
+				svgText[text][4] = svgFontType;
+				text++;
+				typeText = false;
+				showSVG();
+				showField("textAnnotation");
+			}
+		}
+
+		function drawText(x1, y1, val, color, fontstyle) {
+			ctx.beginPath();
+			ctx.font = fontstyle;
+			ctx.fillStyle = color;
+			ctx.fillText(val, x1, y1);
+		}
+
+		function Line() {
+			drawCanvas.onmousedown = function (e) {
+				paintLine = true;
+				x1 = e.pageX - document.getElementById("allcanvas").offsetLeft; //e=mouse cursor, this=canvas original x,
+				y1 = e.pageY - document.getElementById("allcanvas").offsetTop;
+			}
+
+			drawCanvas.onmousemove = function (e) {
+				drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+				var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
+					y2 = e.pageY - document.getElementById("allcanvas").offsetTop;
+				if (paintLine) {
+					drawLine(drawCtx, x1, y1, x2, y2, svgColor, svgStrokeWidth);
+
+					drawCtx.fillStyle = "red";
+					drawCtx.font = 1;
+					const powX = Math.pow((x2 - x1), 2);
+					const powY = Math.pow((y2 - y1), 2);
+					var length = Math.sqrt((powX + powY), 2);
+					length = (length).toFixed(2);
+					//drawCtx.fillText(length + 'mm', (x2 + x1) / 2, (y2 + y1) / 2);
+				}
+			}
+
+			drawCanvas.onmouseup = function (e) {
+				paintLine = false;
+				var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
+					y2 = e.pageY - document.getElementById("allcanvas").offsetTop;
+				drawLine(ctx, x1, y1, x2, y2, svgColor, svgStrokeWidth);
+
+				svgLine[line][0] = (x1 - PanX) / scaleRatio;
+				svgLine[line][1] = (y1 - PanY) / scaleRatio;
+				svgLine[line][2] = (x2 - PanX) / scaleRatio;
+				svgLine[line][3] = (y2 - PanY) / scaleRatio;
+				svgLine[line][4] = svgColor;
+				svgLine[line][5] = svgStrokeWidth;
+				line++;
+				showSVG();
+			}
+		}
+
+		function drawLine(ctxType, x1, y1, x2, y2, color, strokewidth) {
+			ctxType.beginPath();
+			ctxType.strokeStyle = color;
+			ctxType.lineWidth = strokewidth;
+			ctxType.moveTo(x1, y1);
+			ctxType.lineTo(x2, y2);
+			ctxType.stroke();
+		}
+
+		function Rect() {
+			drawCanvas.onmousedown = function (e) {
+				paintRect = true;
+				x1 = e.pageX - document.getElementById("allcanvas").offsetLeft; //e=mouse cursor, this=canvas original x,
+				y1 = e.pageY - document.getElementById("allcanvas").offsetTop;
+			}
+
+			drawCanvas.onmousemove = function (e) {
+				drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+				var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
+					y2 = e.pageY - document.getElementById("allcanvas").offsetTop;
+
+				if (paintRect)
+					drawRect(drawCtx, x1, y1, x2, y2, svgColor, svgStrokeWidth);
+			}
+
+			drawCanvas.onmouseup = function (e) {
+				paintRect = false;
+				var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
+					y2 = e.pageY - document.getElementById("allcanvas").offsetTop;
+				drawRect(ctx, x1, y1, x2, y2, svgColor, svgStrokeWidth);
+
+				svgRect[rect][0] = (x1 - PanX) / scaleRatio;
+				svgRect[rect][1] = (y1 - PanY) / scaleRatio;
+				svgRect[rect][2] = (x2 - PanX) / scaleRatio;
+				svgRect[rect][3] = (y2 - PanY) / scaleRatio;
+				svgRect[rect][4] = svgColor;
+				svgRect[rect][5] = svgStrokeWidth;
+				rect++;
+				showSVG();
+			}
+		}
+
+		function drawRect(ctxType, x1, y1, x2, y2, color, strokewidth) {
+			var width = x2 - x1,
+				height = y2 - y1;
+			ctxType.beginPath();
+			ctxType.strokeStyle = color;
+			ctxType.lineWidth = strokewidth;
+			ctxType.rect(x1, y1, width, height);
+			ctxType.stroke();
+		}
+
+		var rx, ry;
+		function Ellipse() {
+			drawCanvas.onmousedown = function (e) {
+				paintEllipse = true;
+				x1 = e.pageX - document.getElementById("allcanvas").offsetLeft; //e=mouse cursor, this=canvas original x,
+				y1 = e.pageY - document.getElementById("allcanvas").offsetTop;
+			}
+
+			drawCanvas.onmousemove = function (e) {
+				drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+				var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
+					y2 = e.pageY - document.getElementById("allcanvas").offsetTop;
+				rx = Math.abs(x2 - x1);
+				ry = Math.abs(y2 - y1);
+
+				if (paintEllipse)
+					drawEllipse(drawCtx, x1, y1, rx, ry, svgColor, svgStrokeWidth);
+			}
+
+			drawCanvas.onmouseup = function (e) {
+				paintEllipse = false;
+				var x2 = e.pageX - document.getElementById("allcanvas").offsetLeft,
+					y2 = e.pageY - document.getElementById("allcanvas").offsetTop;
+				rx = Math.abs(x2 - x1);
+				ry = Math.abs(y2 - y1);
+				drawEllipse(ctx, x1, y1, rx, ry, svgColor, svgStrokeWidth);
+
+				svgEllipse[ellipse][0] = (x1 - PanX) / scaleRatio;
+				svgEllipse[ellipse][1] = (y1 - PanY) / scaleRatio;
+				svgEllipse[ellipse][2] = rx / scaleRatio;
+				svgEllipse[ellipse][3] = ry / scaleRatio;
+				svgEllipse[ellipse][4] = svgColor;
+				svgEllipse[ellipse][5] = svgStrokeWidth;
+				ellipse++;
+				showSVG();
+			}
+		}
+
+		function drawEllipse(ctxType, x1, y1, rx, ry, color, strokewidth) {
+			ctxType.lineWidth = strokewidth;
+			ctxType.strokeStyle = color;
+			ctxType.beginPath();
+			ctxType.ellipse(x1, y1, ry, rx, Math.PI / 2, 0, 2 * Math.PI); //x, y, major radiusX, minor radiusY, rotation, startAngle, endAngle
+			ctxType.stroke();
+		}
+
+		function redrawAnnotation() {
+			for (var i = 0; i < text; i++) {
+				var fontType = svgText[i][4];
+				var font = parseInt(fontType.substr(0, 2)) * scaleRatio;
+				fontType = font + fontType.substr(2);
+				drawText((svgText[i][0] + (PanX / scaleRatio)) * scaleRatio, (svgText[i][1] + (PanY / scaleRatio)) *
+					scaleRatio, svgText[i][2], svgText[i][3], fontType);
+			}
+			for (var i = 0; i < line; i++) {
+				drawLine(ctx, (svgLine[i][0] + (PanX / scaleRatio)) * scaleRatio, (svgLine[i][1] + (PanY / scaleRatio)) *
+					scaleRatio, (svgLine[i][2] + (PanX / scaleRatio)) * scaleRatio, (svgLine[i][3] + (PanY /
+						scaleRatio)) * scaleRatio, svgLine[i][4], svgLine[i][5]);
+			}
+			for (var i = 0; i < rect; i++) {
+				drawRect(ctx, (svgRect[i][0] + (PanX / scaleRatio)) * scaleRatio, (svgRect[i][1] + (PanY / scaleRatio)) *
+					scaleRatio, (svgRect[i][2] + (PanX / scaleRatio)) * scaleRatio, (svgRect[i][3] + (PanY /
+						scaleRatio)) * scaleRatio, svgRect[i][4], svgRect[i][5]);
+			}
+			for (var i = 0; i < ellipse; i++) {
+				drawEllipse(ctx, (svgEllipse[i][0] + (PanX / scaleRatio)) * scaleRatio, (svgEllipse[i][1] + (PanY /
+					scaleRatio)) * scaleRatio, svgEllipse[i][2] * scaleRatio, svgEllipse[i][3] * scaleRatio,
+					svgEllipse[i][4], svgEllipse[i][5]);
+			}
+		}
+		// < !--END Annotation-- >
+
+		var lasttext = 0,
+			lastline = 0,
+			lastrect = 0,
+			lastellipse = 0;
+
+		function showSVG() {
+			var table = document.getElementById("myTable");
+			var svgstr;
+			var svghead = '<svg width="' + sourceImage.width + '" height="' + sourceImage.height + '">\n';
+			for (var i = lasttext; i < text; i++) {
+				svgstr = '<text x="' + parseInt(svgText[i][0]);
+				svgstr += '" y="' + parseInt(svgText[i][1]);
+				svgstr += '" fill="' + svgText[i][3];
+				svgstr += '" font-size="' + svgText[i][4].substr(0, 2) + '">';
+				svgstr += svgText[i][2] + '</text>\n';
+
+				tablelist(svghead + svgstr + '</svg>', table, "text");
+			}
+
+			for (var i = lastline; i < line; i++) {
+				svgstr = '<line x1="' + parseInt(svgLine[i][0]);
+				svgstr += '" y1="' + parseInt(svgLine[i][1]);
+				svgstr += '" x2="' + parseInt(svgLine[i][2]);
+				svgstr += '" y2="' + parseInt(svgLine[i][3]);
+				svgstr += '" stroke="' + svgLine[i][4] + '" stroke-width="' + svgLine[i][5] + '" fill="none"/>\n';
+
+				tablelist(svghead + svgstr + '</svg>', table, "line");
+			}
+
+			for (var i = lastrect; i < rect; i++) {
+				var width = svgRect[i][2] - svgRect[i][0],
+					height = svgRect[i][3] - svgRect[i][1];
+				svgstr = '<rect x="' + parseInt(svgRect[i][0]);
+				svgstr += '" y="' + parseInt(svgRect[i][1]);
+				svgstr += '" width="' + parseInt(width);
+				svgstr += '" height="' + parseInt(height);
+				svgstr += '" stroke="' + svgRect[i][4] + '" stroke-width="' + svgRect[i][5] + '" fill="none"/>\n';
+
+				tablelist(svghead + svgstr + '</svg>', table, "rectangle");
+			}
+
+			for (var i = lastellipse; i < ellipse; i++) {
+				svgstr = '<ellipse cx="' + parseInt(svgEllipse[i][0]);
+				svgstr += '" cy="' + parseInt(svgEllipse[i][1]);
+				svgstr += '" rx="' + parseInt(svgEllipse[i][2]);
+				svgstr += '" ry="' + parseInt(svgEllipse[i][3]);
+				svgstr += '" stroke="' + svgEllipse[i][4] + '" stroke-width="' + svgEllipse[i][5] + '" fill="none"/>\n';
+
+				tablelist(svghead + svgstr + '</svg>', table, "ellipse");
+			}
+			allAnnotationSVG += svgstr;
+			lasttext = text;
+			lastline = line;
+			lastrect = rect;
+			lastellipse = ellipse;
+		}
+
+		function educationalPlatform() {
+			//var svghead = '<svg width="' + sourceImage.width + '" height="' + sourceImage.height + '">\n';
+			//var svg = window.btoa(svghead + allAnnotationSVG + '</svg>');
+			//var xmlStr = formInputsToXML(modalityType, document.URL, UID.trim(), svg, sourceImage.width, sourceImage.height, windowCenter, windowWidth, pixelDataOffset, dcmFile, "");
+			if (DR_ID != undefined) {
+				sessionStorage.setItem("DR_ID", DR_ID);
+				window.open("compareAnswer.html?DR_ID" + DR_ID, "_blank");
+			} else { alert("Please fill the diagnostic report previously!"); }
+
+		}
+
+		var arr = ["textAnnotation"];
+		function showField(idVal) {
+			if (document.getElementById(idVal).style.display == "none")
+				document.getElementById(idVal).style.display = "block";
+			else
+				document.getElementById(idVal).style.display = "none";
+
+			for (var i = 0; i < arr.length; i++) {
+				if (idVal != arr[i])
+					document.getElementById(arr[i]).style.display = "none";
+			}
+		}
+
+		function showRecord() {
+			modal.style.display = "block";
+			document.getElementById("modal-content").innerHTML = '<span class="close" onclick="closeModal()">&times;</span><center>WW: <input type="number" style="width: 5em" id="wwidth">    &nbsp;WC: <input type="number" style="width: 5em" id="wcenter">     &nbsp;<button type="button" onclick="windowLevelByVal()" style="height: 25px; width: 60px; background-color: black; ">Enter</button></center>';
+		}
+
+		window.onclick = function (event) {
+			if (event.target == modal) modal.style.display = "none";
+		}
+
+		function closeModal() {
+			modal.style.display = "none";
+		}
+
+		function tablelist(svgstr1, table, annotationType) {
+			table = table.getElementsByTagName("tbody")[0];
+			var btn = document.createElement('input');
+			btn.style.backgroundColor = "#d9d9d9";
+			btn.type = "button";
+			btn.id = "postAnnotationBtn" + table.rows.length;
+			btn.value = "Post Annotation";
+			var lenrow = table.rows.length;
+			btn.onclick = function () {
+				postFHIR(lenrow)
+			};
+
+			var txtbox = document.createElement('input');
+			txtbox.style.backgroundColor = "white";
+			txtbox.type = "text";
+			txtbox.id = "PositionTB" + table.rows.length;
+			txtbox.disabled = 'false';
+			txtbox.value = svgstr1;
+
+			var dropdownform = document.createElement('select');
+			dropdownform.id = "FormReportType_" + table.rows.length;
+
+			var optionText = [];
+			if (modality == "MG") {
+				dropdownform.onchange = function () {
+					OnSelectedIndexChange(this, table, lenrow)
+				};
+				optionText = ["Finding Type", "Mammo Mass", "Mammo Calcification", "Mammo Architectural Distortion", "Mammo Focal Asymetry"]
+			}
+			else {
+				optionText = ["Finding Type", "unvailable findings report"];
+			}
+			for (var i = 0; i < optionText.length; i++) {
+				dropdownform.appendChild(option = document.createElement("option"));
+				option.value = i;
+				option.text = optionText[i];
+			}
+
+			table.appendChild(tr = document.createElement("tr"));
+			tr.appendChild(td = document.createElement("td"));
+			td.innerHTML = annotationType;
+			tr.appendChild(td = document.createElement("td"));
+			td.appendChild(txtbox);
+			tr.appendChild(td = document.createElement("td"));
+			td.appendChild(btn);
+			tr.appendChild(td = document.createElement("td"));
+			td.appendChild(dropdownform);
+			tr.appendChild(td = document.createElement("td"));
+			td.id = "findingID" + (table.rows.length-1);
+			td.innerHTML = "";
+		}
+
+		function postFHIR(rowslength) {
+			var annotationType = document.getElementById("myTable").getElementsByTagName("tbody")[0].rows[rowslength].cells[0].innerHTML;
+			document.getElementById("postAnnotationBtn" + rowslength).style.color = "black";
+			document.getElementById("postAnnotationBtn" + rowslength).value = "posted";
+			document.getElementById("postAnnotationBtn" + rowslength).disabled = true;
+			var svg = document.getElementById("PositionTB" + rowslength).value;
+			svg = window.btoa(svg)
+			formInputsToXML(modalityType, document.URL, UID, svg, sourceImage.width, sourceImage.height, windowCenter,
+				windowWidth, pixelDataOffset, dcmFile, annotationType);
+			
+			document.getElementById("findingID" + rowslength).innerHTML= observationID;
+		}
+
+		function OnSelectedIndexChange(drpdwn, table, rowslength) {
+			var url = "";
+			var selectedText = drpdwn.options[drpdwn.selectedIndex].innerHTML;
+			if (selectedText == "Mammo Mass")
+				url = "findingReport/MammoMass.html";
+			else if (selectedText == "Mammo Calcification")
+				url = "findingReport/MammoCalcification.html";
+			else if (selectedText == "Mammo Architectural Distortion")
+				url = "findingReport/MammoArchitecturalDistortion.html";
+			else if (selectedText == "Mammo Focal Asymetry")
+				url = "findingReport/MammoFocalAsymetry.html";
+
+			var id = -1;
+			var annotationType = table.rows[rowslength].cells[0].innerHTML;
+			for (var i = 0; i <= rowslength; i++) {
+				if (table.rows[i].cells[0].innerHTML == annotationType)
+					id += 1;
+			}
+			if (annotationType == "text")
+				id = ctext[id];
+			else if (annotationType == "line")
+				id = cline[id];
+			else if (annotationType == "rectangle")
+				id = crect[id];
+			else if (annotationType == "ellipse")
+				id = cellipse[id];
+			if (id == undefined) alert("Please post the annotation first!");
+			else {
+				window.open(url + '?annotationID=' + id + '&rowNum=' + rowslength + '&findingType=' + selectedText + '&imagingStudyID=' + ImagingStudy_ID + '&patientStudyID=' + patientStudy_ID, '_blank',
+					'location=yes,height=900,width=900,scrollbars=yes,status=yes,top=0,left=500');
+			}
+		}
+
+		function HandlePopupResult(result, rowNum, findingType) {
+			var table = document.getElementById("myTable").getElementsByTagName("tbody")[0];
+			findingType = findingType.replaceAll("%20", " ");
+			if (table.rows[rowNum].cells[4].innerHTML != "") {
+				table.rows[rowNum].cells[4].innerHTML += ",<br>";
+			}
+			table.rows[rowNum].cells[4].innerHTML += findingType + "=" + result;
+		}
+		function HandlePopupResultDR(DR_id) {
+			DR_ID = DR_id;
+			//alert(DR_ID);
+		}
+		function createDReport() {
+			if (modality == "MG") {
+				var table = document.getElementById("myTable");
+				var findingID = [];
+				for (var i = 1; i < table.rows.length; i++) {
+					var findingSTR = document.getElementById("myTable").rows[i].cells[4].innerHTML;
+					if (findingSTR != "") {
+						var paramsStr = findingSTR.split(",");
+						for (j = 0; j < paramsStr.length; j++) {
+							val = paramsStr[j].split("=");
+							findingID.push(val[1]);
+						}
+					}
+				}
+				sessionStorage.setItem('findingID', findingID);
+				window.open("findingReport/MammoQuestion.html" + '?imagingStudyID=' + ImagingStudy_ID + '&patientStudyID=' + patientStudy_ID, '_blank', 'location=yes,height=900,width=900,scrollbars=yes,status=yes,top=0,left=500');
+			}
+			else { alert("Diagnostic report unvailable for " + modality + " images!"); }
+		}
+	</script>
+</body>
+
+</html>
