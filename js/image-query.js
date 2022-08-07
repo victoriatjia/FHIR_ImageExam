@@ -58,7 +58,7 @@ function getPatientList() {
 
     if (pID != "") {
 
-        getJSON(FHIRURL + '/Patient/' + pID, function (data2) {
+        getJSON(FHIRURL + 'Patient/' + pID, function (data2) {
             var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
             var row = table.insertRow(-1);
             var cell1 = row.insertCell(0);
@@ -92,7 +92,7 @@ function getPatientList() {
                 getJSON(DICOMURL + '/patients/' + data[i], function (orthancPatient) {
                     var patientID = orthancPatient.MainDicomTags.PatientID;
                     var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
-                    getJSON(FHIRURL + '/Patient/' + patientID, function (data2) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
+                    getJSON(FHIRURL + 'Patient/' + patientID, function (data2) { //https://mtss.dicom.tw/api/fhir/ImagingStudy/
 
                         var row = table.insertRow(-1);
                         var cell1 = row.insertCell(0);
