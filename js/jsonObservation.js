@@ -356,7 +356,7 @@ var DiagnosticReport = {
     },
     "resultsInterpreter": [
         {
-            "reference": "Practitioner/TCUMI106-radiologist1"
+            "reference": "Practitioner/radiologist"
         }
     ],
     "issued": "",

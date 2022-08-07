@@ -1,7 +1,7 @@
 //GET FHIR value
 function getFHIR(val) {
 	initialization();
-	var FHIRObsSource = fhir.url + "Observation/" + val;
+	var FHIRObsSource = FHIRURL + "Observation/" + val;
 
 
 	var xhttp = new XMLHttpRequest();
@@ -334,7 +334,7 @@ function storedPixelValueToCanvas(ctx, scaleWidth, scaleHeight, pPanX, pPanY) {
 //compareAnswer used function
 function getFHIREdu(id, type) {
 	initialization();
-	var FHIRObsSource = fhir.url + "/Observation/" + id;
+	var FHIRObsSource = FHIRURL + "/Observation/" + id;
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.open("GET", FHIRObsSource, true);
@@ -348,7 +348,7 @@ function getFHIREdu(id, type) {
 }
 function getFHIRDR(id, type) {
 	initialization();
-	var FHIRObsSource = fhir.url + "/DiagnosticReport/" + id;
+	var FHIRObsSource = FHIRURL + "/DiagnosticReport/" + id;
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.open("GET", FHIRObsSource, true);
@@ -465,7 +465,7 @@ function displayDR(type) {
 
 	var ResultValue = "";
 	for (var i = 0; i < singlePatient.result.length; i++) { //DRObservation.result.length
-		strUrl = fhir.url + singlePatient.result[i].reference;
+		strUrl = FHIRURL + singlePatient.result[i].reference;
 		getJSON(strUrl, 0, "Finding", table, "DR", type);
 	}
 }

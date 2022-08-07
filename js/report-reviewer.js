@@ -3,16 +3,18 @@ var previousRow, previousRow2, rowmaxNum = 20;
 var findingCount = 0;;
 var DrawdcmAnnotationID = [], Annotationcount = 0;
 
-function jsFunction(value) {
+function ddl_param(value) {
     var valueBox = document.getElementById("valueBox");
     clearDiv(valueBox);
     var input = document.createElement("input");
     input.id = "textValue";
     valueBox.appendChild(input);
 }
+
 function clearDiv(elementID) {
     elementID.innerHTML = "";
 }
+
 function searchPatient() {
     clearDiv(document.getElementById("contactBox"));
     clearDiv(document.getElementById("listPatient"));
@@ -27,15 +29,16 @@ function searchPatient() {
         var strUrl;
         switch (condition) {
             case "Patient ID":
-                strUrl = fhir.url + "DiagnosticReport?subject=TCUMI106." + conditionValue;
+                strUrl = FHIRURL + "DiagnosticReport?subject=" + conditionValue;
                 break;
         }
         getJSON(strUrl, 0, "Patient", null, null, null);
     }
 }
+
 function getJSON(strUrl, firstrowNum, type, tableTarget, fromDR, typexxpt) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', strUrl, true);//https://orthanc.dicom.tw/dicom-web/studies/1.3.6.1.4.1.14519.5.2.1.9999.103.2445110399502685110179049624124
+    xhr.open('GET', strUrl, true);
     //xhr.setRequestHeader('Authorization', 'Bearer ' + token);
     xhr.setRequestHeader("Content-type", 'application/json');
     xhr.onreadystatechange = function () {
@@ -60,6 +63,7 @@ function getJSON(strUrl, firstrowNum, type, tableTarget, fromDR, typexxpt) {
     }
     xhr.send();
 }
+
 function setTablePatient(patientObservation, firstrowNum, type, tableTarget, findingCount, fromDR, typexxpt) {
     if (type == "Patient") {
         clearDiv(document.getElementById("contactBox"));
@@ -144,7 +148,7 @@ function setTablePatient(patientObservation, firstrowNum, type, tableTarget, fin
         for (var i = 0; i < singlePatient.derivedFrom.length; i++) {
             if (i != 0) AnnotationValue += ',<br>';
             var str = singlePatient.derivedFrom[i].reference.split("/");
-            AnnotationValue += "<a target='_blank' href='systemA.html?AnnotationID=" + str[str.length - 1] + "'>" + str[str.length - 1];
+            AnnotationValue += "<a target='_blank' href='report-creator.html?AnnotationID=" + str[str.length - 1] + "'>" + str[str.length - 1];
             if (fromDR = "DR") { DrawdcmAnnotationID.push(str[str.length - 1]); Annotationcount++; }
             //getFHIREdu(str[str.length - 1], 'stuAnswer');
         }
@@ -192,6 +196,7 @@ function setTablePatient(patientObservation, firstrowNum, type, tableTarget, fin
         }
     }
 }
+
 function setfirstRow(table, cellText) {
     var row = document.createElement("tr");
     for (var i = 0; i < cellText.length; i++) {
@@ -202,6 +207,7 @@ function setfirstRow(table, cellText) {
     }
     table.appendChild(row);
 }
+
 function displayIdentifier(table, patientObservation, firstrowNum) {
     var condition = document.getElementById("conditionPatient").value;
     var row = document.createElement("tr");
@@ -237,6 +243,7 @@ function displayIdentifier(table, patientObservation, firstrowNum) {
 
     table.appendChild(row);
 }
+
 var createClickHandler2 = function (row, firstrowNum) {
     return function () {
         findingCount = 0;
@@ -341,7 +348,7 @@ var createClickHandler2 = function (row, firstrowNum) {
 
         var ResultValue = "";
         for (var i = 0; i < singlePatient.result.length; i++) {
-            strUrl = fhir.url + singlePatient.result[i].reference;
+            strUrl = FHIRURL + singlePatient.result[i].reference;
             getJSON(strUrl, 0, "Finding", table, null, null);
         }
     };
