@@ -131,11 +131,9 @@
 		//image source file path
 		var dcmFile;
 		var dcmFileArray = new Array(9);
-		dcmFileArray = ["https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/MR2S1IM9.dcm",
-			"https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/mammo1.dcm",
-			"https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/CT_A.dcm",
-			"https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/chest01.dcm",
-			"https://orthanc.dicom.tw/wado/?requestType=WADO&studyUID=1.3.6.1.4.1.14519.5.2.1.9999.103.2445110399502685110179049624125&seriesUID=1.3.6.1.4.1.14519.5.2.1.9999.103.2226892066207840840424092100047&objectUID=1.2.276.0.7230010.3.1.4.2437395334.5140.1597491138.380&contentType=application/dicom"
+		dcmFileArray = [
+			"https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/MR2S1IM9.dcm",
+			"https://victoriatjia.github.io/Guideline/medicalImaging/DCMfiles/mammo1.dcm","https://orthanc.dicom.tw/wado/?requestType=WADO&studyUID=1.3.6.1.4.1.14519.5.2.1.9999.103.2445110399502685110179049624125&seriesUID=1.3.6.1.4.1.14519.5.2.1.9999.103.2226892066207840840424092100047&objectUID=1.2.276.0.7230010.3.1.4.2437395334.5140.1597491138.380&contentType=application/dicom","https://orthanc.dicom.tw/wado/?requestType=WADO&studyUID=1.2.1124.113532.134.0.1.3.20030423.143824.800378&seriesUID=1.2.1840.113681.2198909122.3931.3228559234.99.1&objectUID=1.2.1840.113681.2198909122.3931.3228559234.102.1&contentType=application/dicom"
 		];
 
 		//session
@@ -150,6 +148,7 @@
 		else {
 			if (studyID == null && seriesID == null) {
 				initialization();
+				dicomURL=3;
 				dcmFile = dcmFileArray[dicomURL];
 				getDCM("A");
 			} else {
