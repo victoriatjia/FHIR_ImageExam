@@ -217,6 +217,9 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
     var cell3 = row.insertCell(2);
+	cell1.style.verticalAlign = "middle";
+	cell2.style.verticalAlign = "middle";
+	cell3.style.verticalAlign = "middle";
     var createClickHandler = function () {
         return function () {
             if (dataType == "Study") {
